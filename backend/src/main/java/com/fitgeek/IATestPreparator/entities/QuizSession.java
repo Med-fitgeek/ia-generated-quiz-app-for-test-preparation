@@ -5,6 +5,7 @@ import com.fitgeek.IATestPreparator.entities.enums.SessionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,12 +29,9 @@ public class QuizSession {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private int numberOfQuestions;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Difficulty difficulty;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id", nullable = false)
+    private Quiz quiz;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -42,14 +40,13 @@ public class QuizSession {
     @Column(nullable = false)
     private LocalDateTime startedAt;
 
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
-
     private LocalDateTime completedAt;
+
+    private Duration duration;
 
     @PrePersist
     public void onCreate(){
         this.startedAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
     }
 }
