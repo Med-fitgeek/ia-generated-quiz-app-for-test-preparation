@@ -1,0 +1,23 @@
+<div class="container flex-col gap-5">
+  <h1 class="title">My Quizzes</h1>
+
+  <div class="flex-between">
+    <p class="muted">Manage your quiz sessions</p>
+    <button class="btn btn-primary" (click)="newQuiz()">+ New Quiz</button>
+  </div>
+
+  <div class="flex-col gap-4">
+    <div class="card" *ngFor="let quiz of quizzes">
+      <h3 class="text-accent">{{ quiz.title }}</h3>
+
+      <p>Sessions: {{ quiz.sessionsCount }}</p>
+      <p class="muted">Last played: {{ quiz.lastPlayedAt }}</p>
+
+      <div style="margin-top: 16px;">
+        <button class="btn btn-secondary" (click)="openQuiz(quiz.quizId)">
+          Play / Resume
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
