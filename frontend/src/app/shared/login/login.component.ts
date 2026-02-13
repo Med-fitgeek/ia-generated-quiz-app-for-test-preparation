@@ -41,7 +41,7 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (res) => {
-        this.authService.saveToken(res.token);
+        this.authService.saveToken(res.accessToken);
         this.successMessage = 'Connexion réussie.'; 
         this.router.navigate(['/dashboard']);
       },
