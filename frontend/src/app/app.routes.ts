@@ -14,6 +14,31 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./shared/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'source',
+    loadComponent: () => import('./features/knowledge-upload/knowledge-upload.component').then(m => m.KnowledgeUploadComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'quiz-generation/:id',
+    loadComponent: () => import('./features/quiz-generate/quiz-generate.component').then(m => m.QuizGenerateComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'quiz-preview',
+    loadComponent: () => import('./features/quiz-preview/quiz-preview.component').then(m => m.QuizPreviewComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'quiz-player',
+    loadComponent: () => import('./features/quiz-player/quiz-player.component').then(m => m.QuizPlayerComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./shared/dashboard/dashboard.component').then(m => m.DashboardComponent),
+    canActivate: [authGuard]
   }
 ];
 
