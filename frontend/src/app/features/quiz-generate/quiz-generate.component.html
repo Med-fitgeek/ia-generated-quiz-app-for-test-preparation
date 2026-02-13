@@ -1,0 +1,43 @@
+<div class="container">
+  <h1>Generate Quiz</h1>
+  <p>Configure the quiz parameters and start generation.</p>
+
+  <div class="card">
+    <div *ngIf="error" class="alert alert-error">
+      {{ error }}
+    </div>
+
+    <div class="flex-col gap-4">
+      <div class="flex-col gap-2">
+        <label>Number of questions</label>
+        <input
+          type="number"
+          min="1"
+          max="100"
+          [(ngModel)]="numberOfQuestions"
+          placeholder="e.g. 10"
+        />
+      </div>
+
+      <div class="flex-col gap-2">
+        <label>Difficulty</label>
+        <select [(ngModel)]="difficulty">
+          <option value="EASY">Easy</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HARD">Hard</option>
+        </select>
+      </div>
+
+      <div class="flex gap-3" style="margin-top: 16px;">
+        <button class="btn btn-secondary" (click)="router.navigate(['/knowledge'])" [disabled]="loading">
+          Back
+        </button>
+        <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
+          {{ loading ? 'Generating...' : 'Generate' }}
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loader"></div>
+    </div>
+  </div>
+</div>
