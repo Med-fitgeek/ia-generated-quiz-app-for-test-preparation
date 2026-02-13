@@ -1,3 +1,3 @@
 export interface KnowledgeNormalizedResponse {
-  knowledgeId: number;
+  sourceId: number;
 }
