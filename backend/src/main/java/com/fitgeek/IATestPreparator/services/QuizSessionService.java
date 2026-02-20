@@ -1,16 +1,22 @@
 package com.fitgeek.IATestPreparator.services;
 
-import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
-import com.fitgeek.IATestPreparator.entities.QuizSession;
-import com.fitgeek.IATestPreparator.entities.User;
+import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
+import com.fitgeek.IATestPreparator.dtos.SessionRequestDto;
+import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
+import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface QuizSessionService {
 
-    QuizSession createSession(User user, KnowledgeSource source, int numberOfQuestions, String difficulty);
+    SessionResponseDto createSession(UserDetails userDetails, SessionRequestDto sessionRequestDto);
 
-    void markGenerating(QuizSession session);
+    SessionResponseDto startSession(UserDetails userDetails, Long sessionId);
 
-    void markGenerated(QuizSession session);
+    SessionResponseDto markFailed(UserDetails userDetails, Long sessionId);
 
-    void markFailed(QuizSession session);
+    ResultResponseDto submitSession(
+            UserDetails userDetails,
+            Long sessionId,
+            SubmitSessionRequestDto request
+    );
 }

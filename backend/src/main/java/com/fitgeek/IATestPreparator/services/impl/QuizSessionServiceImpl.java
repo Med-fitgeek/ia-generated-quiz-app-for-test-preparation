@@ -1,20 +1,23 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
-import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
-import com.fitgeek.IATestPreparator.entities.QuizSession;
-import com.fitgeek.IATestPreparator.entities.User;
-import com.fitgeek.IATestPreparator.entities.enums.Difficulty;
+import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
+import com.fitgeek.IATestPreparator.dtos.SessionRequestDto;
+import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
+import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
+import com.fitgeek.IATestPreparator.entities.*;
 import com.fitgeek.IATestPreparator.entities.enums.SessionStatus;
-import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
+import com.fitgeek.IATestPreparator.excpetion.BusinessException;
+import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
-import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,38 +25,132 @@ import java.time.LocalDateTime;
 public class QuizSessionServiceImpl implements QuizSessionService {
 
     private final QuizSessionRepository quizSessionRepository;
+    private final QuizRepository quizRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public QuizSession createSession(User owner, KnowledgeSource source, int numberOfQuestions, String difficulty) {
+    public SessionResponseDto createSession(UserDetails userDetails, SessionRequestDto sessionRequestDto) {
+
+        User owner = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        Quiz quiz = quizRepository.findById(sessionRequestDto.quizId())
+                .orElseThrow(() -> new BusinessException("Quiz not found"));
 
         QuizSession session = QuizSession.builder()
                 .user(owner)
-                .source(source)
-                .numberOfQuestions(numberOfQuestions)
-                .difficulty(Difficulty.valueOf(difficulty))
+                .quiz(quiz)
                 .status(SessionStatus.CREATED)
                 .build();
-        return quizSessionRepository.save(session);
+
+        QuizSession savedSession = quizSessionRepository.save(session);
+
+        return new SessionResponseDto(
+                savedSession.getId()
+        );
     }
 
     @Override
-    public void markGenerating(QuizSession session) {
-        session.setStatus(SessionStatus.GENERATING);
+    public SessionResponseDto startSession(UserDetails userDetails, Long sessionId) {
+
+        userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        QuizSession session = quizSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new BusinessException("Quiz not found"));
+
+        session.setStatus(SessionStatus.STARTED);
         session.setUpdatedAt(LocalDateTime.now());
         quizSessionRepository.save(session);
+
+        return new SessionResponseDto(
+                session.getId()
+        );
     }
 
-    @Override
-    public void markGenerated(QuizSession session) {
-        session.setStatus(SessionStatus.GENERATED);
-        session.setUpdatedAt(LocalDateTime.now());
-        quizSessionRepository.save(session);
-    }
 
     @Override
-    public void markFailed(QuizSession session) {
+    public SessionResponseDto markFailed(UserDetails userDetails, Long sessionId) {
+
+        userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        QuizSession session = quizSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new BusinessException("Quiz not found"));
+
         session.setStatus(SessionStatus.FAILED);
         session.setUpdatedAt(LocalDateTime.now());
         quizSessionRepository.save(session);
+
+        return new SessionResponseDto(
+                session.getId()
+        );
     }
+
+
+    @Override
+    public ResultResponseDto submitSession(
+            UserDetails userDetails,
+            Long sessionId,
+            SubmitSessionRequestDto request
+    ) {
+
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+
+        QuizSession session = quizSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new BusinessException("Session not found"));
+
+        if (!session.getUser().getId().equals(user.getId())) {
+            throw new BusinessException("Unauthorized session access");
+        }
+
+        if (session.getStatus() != SessionStatus.STARTED) {
+            throw new BusinessException("Session is not active");
+        }
+
+        List<Question> questions = session.getQuiz().getQuestions();
+
+        if (questions.size() != request.answers().size()) {
+            throw new BusinessException("Answer count mismatch");
+        }
+
+        int correctCount = 0;
+
+        for (int i = 0; i < questions.size(); i++) {
+            Question question = questions.get(i);
+            Integer selectedIndex = request.answers().get(i);
+
+            boolean isCorrect = selectedIndex != null &&
+                    selectedIndex == question.getCorrectIndex();
+
+            if (isCorrect) correctCount++;
+
+            QuizAnswer answer = QuizAnswer.builder()
+                    .session(session)
+                    .question(question)
+                    .selectedIndex(selectedIndex)
+                    .correct(isCorrect)
+                    .build();
+
+            session.getAnswers().add(answer);
+        }
+
+        double rate = (correctCount * 100.0) / questions.size();
+
+        session.setCorrectCount(correctCount);
+        session.setTotalQuestions(questions.size());
+        session.setScorePercentage(rate);
+        session.setCompletedAt(LocalDateTime.now());
+        session.setStatus(SessionStatus.COMPLETED);
+
+        quizSessionRepository.save(session);
+
+        return new ResultResponseDto(
+                correctCount,
+                questions.size(),
+                rate
+        );
+    }
+
 }

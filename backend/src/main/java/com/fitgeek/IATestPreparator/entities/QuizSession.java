@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "quiz_sessions")
@@ -22,10 +23,6 @@ public class QuizSession {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "source_id", nullable = false)
-    private KnowledgeSource source;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -36,6 +33,13 @@ public class QuizSession {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private SessionStatus status; // IN_PROGRESS / COMPLETED
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    private List<QuizAnswer> answers;
+
+    private Integer correctCount;
+    private Integer totalQuestions;
+    private Double scorePercentage;
 
     @Column(nullable = false)
     private LocalDateTime startedAt;
@@ -48,5 +52,6 @@ public class QuizSession {
     @PrePersist
     public void onCreate(){
         this.startedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }
