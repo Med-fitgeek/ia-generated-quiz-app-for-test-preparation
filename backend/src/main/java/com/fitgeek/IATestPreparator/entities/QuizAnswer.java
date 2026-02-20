@@ -3,15 +3,13 @@ package com.fitgeek.IATestPreparator.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "user_answers")
+@Table(name = "quiz_answers")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class UserAnswer {
+public class QuizAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
