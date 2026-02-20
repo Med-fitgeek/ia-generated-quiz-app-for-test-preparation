@@ -1,2 +1,7 @@
-package com.fitgeek.IATestPreparator.dtos;public class ResultResponseDto {
+package com.fitgeek.IATestPreparator.dtos;
+
+public record ResultResponseDto (
+        int correctCount,
+        int size,
+        double rate) {
 }

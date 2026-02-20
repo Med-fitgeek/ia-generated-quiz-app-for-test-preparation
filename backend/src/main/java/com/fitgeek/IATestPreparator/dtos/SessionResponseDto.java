@@ -1,2 +1,3 @@
-package com.fitgeek.IATestPreparator.dtos;public class SessionResponseDto {
-}
+package com.fitgeek.IATestPreparator.dtos;
+
+public record SessionResponseDto (Long id) {}
