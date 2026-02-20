@@ -19,8 +19,8 @@ export class QuizGenerateComponent implements OnInit {
   sourceId!: number;
 
   // Form state
-  numberOfQuestions = 10;
-  difficulty: Difficulty = 'MEDIUM';
+  numberOfQuestions = 5;
+  difficulty: Difficulty = 'MODERATE';
 
   // UI state
   loading = false;

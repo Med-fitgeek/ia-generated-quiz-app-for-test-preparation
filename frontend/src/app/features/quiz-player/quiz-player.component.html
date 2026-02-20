@@ -1,9 +1,29 @@
-<div class="container card-section" *ngIf="!showResult">
+
+<!-- Error -->
+    <div *ngIf="error" class="alert alert-error">
+      {{ error }}
+    </div>
+    
+<div class="container card-section" *ngIf="state === 'READY'">
+  <div class="card text-center">
+    <h1 class="text-accent">{{'Quiz prêt' }}</h1>
+    <p class="muted">
+      Prêt à commencer ?
+    </p>
+
+    <button class="btn btn-primary" style="margin-top: 24px;" (click)="createQuiz()">
+      Démarrer le quiz
+    </button>
+  </div>
+</div>
+
+
+<div class="container card-section" *ngIf="state === 'IN_PROGRESS'">
 
   <div class="card">
 
     <h2 class="text-accent">
-      Question {{ currentIndex + 1 }} / {{ quiz.generatedQuestions.length }}
+      Question {{ questionIndex + 1 }} / {{ quiz.generatedQuestions.length }}
     </h2>
 
     <p style="font-size: 1.2rem; margin-bottom: 24px;">
@@ -31,7 +51,7 @@
       <button
         class="btn btn-secondary"
         (click)="previous()"
-        [disabled]="currentIndex === 0"
+        [disabled]="questionIndex === 0"
       >
         Précédent
       </button>
@@ -40,7 +60,7 @@
         class="btn btn-primary"
         *ngIf="!isLastQuestion()"
         (click)="next()"
-        [disabled]="selectedAnswers[currentIndex] === null"
+        [disabled]="selectedAnswers[questionIndex] === null"
       >
         Suivant
       </button>
@@ -48,8 +68,8 @@
       <button
         class="btn btn-primary"
         *ngIf="isLastQuestion()"
-        (click)="finish()"
-        [disabled]="selectedAnswers[currentIndex] === null"
+        (click)="submitAnswers()"
+        [disabled]="selectedAnswers[questionIndex] === null"
       >
         Terminer le quiz
       </button>
@@ -60,14 +80,14 @@
 </div>
 
 <!-- Écran de fin -->
-<div class="container card-section" *ngIf="showResult">
+<div class="container card-section" *ngIf="state === 'COMPLETED'">
 
   <div class="card">
-    <h1 class="text-accent">Quiz terminé 🎉</h1>
+    <h1>Quiz terminé 🎉</h1>
     <p>Merci d’avoir complété le quiz.</p>
 
     <p class="muted">
-      Tes réponses vont être envoyées pour analyse et génération du rapport.
+      Vous avez <span class="text-accent">{{rate}} %</span>  de reussite
     </p>
 
     <button class="btn btn-primary" style="margin-top: 24px;">
