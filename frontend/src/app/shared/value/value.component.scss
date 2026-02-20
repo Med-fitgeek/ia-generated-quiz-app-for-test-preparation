@@ -1,0 +1,54 @@
+.section-split {
+  padding: 120px 0;
+  background: #ffffff;
+}
+
+.split-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+.split-text {
+  flex: 1;
+}
+
+.split-visual {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.mockup-card {
+  width: 320px;
+  padding: 30px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.mockup-header {
+  height: 14px;
+  width: 40%;
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.mockup-line {
+  height: 10px;
+  background: #e8edf2;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.mockup-line.short {
+  width: 60%;
+}
+
+.mockup-score {
+  margin-top: 20px;
+  font-weight: bold;
+  color: var(--color-success);
+}
