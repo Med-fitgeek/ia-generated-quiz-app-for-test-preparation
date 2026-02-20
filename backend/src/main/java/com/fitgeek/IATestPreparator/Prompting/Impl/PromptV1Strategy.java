@@ -1,7 +1,10 @@
 package com.fitgeek.IATestPreparator.Prompting.Impl;
 
 import com.fitgeek.IATestPreparator.Prompting.PromptStrategy;
+import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
 import com.fitgeek.IATestPreparator.entities.QuizSession;
+import com.fitgeek.IATestPreparator.entities.User;
+import com.fitgeek.IATestPreparator.entities.enums.Difficulty;
 import org.springframework.stereotype.Component;
 
 
@@ -9,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class PromptV1Strategy implements PromptStrategy {
 
     @Override
-    public String buildPrompt(QuizSession session) {
+    public String buildPrompt(int numberOfQuestion, Difficulty difficulty) {
         return """
         Tu es un expert en pédagogie. Ton rôle est de générer un quiz de haute qualité.
         
@@ -33,7 +36,7 @@ public class PromptV1Strategy implements PromptStrategy {
             }
           ]
         }
-        """.formatted(session.getNumberOfQuestions(), session.getDifficulty());
+        """.formatted(numberOfQuestion, difficulty);
     }
 }
 
