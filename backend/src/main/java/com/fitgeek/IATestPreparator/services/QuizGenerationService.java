@@ -1,8 +1,9 @@
 package com.fitgeek.IATestPreparator.services;
-import com.fitgeek.IATestPreparator.entities.QuizSession;
-import com.fitgeek.IATestPreparator.pojos.GeneratedQuiz;
+import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
+import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
+import com.fitgeek.IATestPreparator.entities.enums.Difficulty;
 
 public interface QuizGenerationService {
 
-    GeneratedQuiz generateQuiz(QuizSession session);
+    GeneratedQuizDto generateQuiz(KnowledgeSource source, int numberOfQuestion, Difficulty difficulty);
 }
