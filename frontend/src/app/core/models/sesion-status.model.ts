@@ -1,0 +1,1 @@
+export type SessionStatus =  'CREATED' | 'STARTED' | 'IN_PROGRESS' | 'PAUSED' | 'FAILED' | 'COMPLETED';
