@@ -3,13 +3,15 @@ package com.fitgeek.IATestPreparator.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "answer_options")
+@Table(name = "user_answers")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class AnswerOption {
+public class UserAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -17,15 +19,16 @@ public class AnswerOption {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
-    private QuestionInstance question;
+    private Question question;
 
-    @Column(nullable = false, length = 255)
-    private String label;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id", nullable = false)
+    private QuizSession session;
+
+    @Column(nullable = false)
+    private int selectedIndex;
 
     @Column(nullable = false)
     private boolean correct;
-
-    @Column(nullable = false)
-    private int orderIndex;
 }
 
