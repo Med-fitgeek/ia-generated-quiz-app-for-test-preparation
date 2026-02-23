@@ -8,9 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface QuizSessionService {
 
-    SessionResponseDto createSession(UserDetails userDetails, SessionRequestDto sessionRequestDto);
-
-    SessionResponseDto startSession(UserDetails userDetails, Long sessionId);
+    SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId);
 
     SessionResponseDto markFailed(UserDetails userDetails, Long sessionId);
 

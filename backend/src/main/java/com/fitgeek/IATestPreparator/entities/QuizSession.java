@@ -47,7 +47,7 @@ public class QuizSession {
     private LocalDateTime updatedAt;
     private LocalDateTime completedAt;
 
-    private Duration duration;
+    private Long durationInSeconds;
 
     @PrePersist
     public void onCreate(){

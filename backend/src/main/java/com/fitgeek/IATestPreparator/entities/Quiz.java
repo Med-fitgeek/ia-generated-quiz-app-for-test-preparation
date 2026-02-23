@@ -20,12 +20,16 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
     private String sourceChecksum;
     private String generatorVersion;
 
     @Builder.Default
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
+
 
     public void addQuestion(Question question) {
         questions.add(question);

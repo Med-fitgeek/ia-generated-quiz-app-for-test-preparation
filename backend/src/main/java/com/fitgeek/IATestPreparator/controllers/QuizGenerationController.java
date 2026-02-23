@@ -2,7 +2,7 @@ package com.fitgeek.IATestPreparator.controllers;
 
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
 import com.fitgeek.IATestPreparator.dtos.QuizGenerationRequestDto;
-import com.fitgeek.IATestPreparator.services.QuizOrchestrationService;
+import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,18 +12,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/quiz-orchestration")
+@RequestMapping("/api/quiz-generation")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
-public class QuizOrchestrationController {
-    private final QuizOrchestrationService quizOrchestrationService;
+public class QuizGenerationController {
+    private final QuizGenerationService quizGenerationService;
 
     @PostMapping("/generate")
     public ResponseEntity<GeneratedQuizDto> generateQuiz(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody QuizGenerationRequestDto requestDto
     ){
-        GeneratedQuizDto quizDto = quizOrchestrationService.generateQuizFromKnowledge(requestDto, userDetails);
+        GeneratedQuizDto quizDto = quizGenerationService.generateQuiz(requestDto, userDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
+    }
+
+    @GetMapping("/quiz/{id}")
+    public ResponseEntity<GeneratedQuizDto> getQuizById(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long id
+    ){
+        GeneratedQuizDto quizDto = quizGenerationService.getQuizById(id, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 }

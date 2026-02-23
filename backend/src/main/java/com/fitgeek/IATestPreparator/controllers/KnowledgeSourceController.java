@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping("/api/knowledge")
+@RequestMapping("/api/source")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
 public class KnowledgeSourceController {

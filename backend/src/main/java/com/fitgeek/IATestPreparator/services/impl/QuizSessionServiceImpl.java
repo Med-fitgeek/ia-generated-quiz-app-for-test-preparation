@@ -16,8 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,13 +31,20 @@ public class QuizSessionServiceImpl implements QuizSessionService {
     private final UserRepository userRepository;
 
     @Override
-    public SessionResponseDto createSession(UserDetails userDetails, SessionRequestDto sessionRequestDto) {
+    public SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId) {
 
         User owner = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new BusinessException("User not found"));
 
-        Quiz quiz = quizRepository.findById(sessionRequestDto.quizId())
+        Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new BusinessException("Quiz not found"));
+
+        Optional<QuizSession> existing =
+                quizSessionRepository.findActiveSession(owner.getId(), quiz.getId());
+
+        if (existing.isPresent()) {
+            return new SessionResponseDto(existing.get().getId());
+        }
 
         QuizSession session = QuizSession.builder()
                 .user(owner)
@@ -47,24 +56,6 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         return new SessionResponseDto(
                 savedSession.getId()
-        );
-    }
-
-    @Override
-    public SessionResponseDto startSession(UserDetails userDetails, Long sessionId) {
-
-        userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
-
-        QuizSession session = quizSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new BusinessException("Quiz not found"));
-
-        session.setStatus(SessionStatus.STARTED);
-        session.setUpdatedAt(LocalDateTime.now());
-        quizSessionRepository.save(session);
-
-        return new SessionResponseDto(
-                session.getId()
         );
     }
 
@@ -105,9 +96,10 @@ public class QuizSessionServiceImpl implements QuizSessionService {
             throw new BusinessException("Unauthorized session access");
         }
 
-        if (session.getStatus() != SessionStatus.STARTED) {
-            throw new BusinessException("Session is not active");
+        if (session.getStatus() == SessionStatus.COMPLETED) {
+            throw new BusinessException("Session already submitted");
         }
+
 
         List<Question> questions = session.getQuiz().getQuestions();
 
@@ -138,9 +130,15 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         double rate = (correctCount * 100.0) / questions.size();
 
+        Duration duration = Duration.between(
+                session.getStartedAt(),
+                LocalDateTime.now()
+        );
+
         session.setCorrectCount(correctCount);
         session.setTotalQuestions(questions.size());
         session.setScorePercentage(rate);
+        session.setDurationInSeconds(duration.getSeconds());
         session.setCompletedAt(LocalDateTime.now());
         session.setStatus(SessionStatus.COMPLETED);
 

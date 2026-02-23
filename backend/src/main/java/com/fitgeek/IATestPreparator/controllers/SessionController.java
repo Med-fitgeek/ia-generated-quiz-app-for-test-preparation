@@ -23,19 +23,10 @@ public class SessionController {
     @PostMapping("/create")
     public ResponseEntity<SessionResponseDto> createSession(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody final SessionRequestDto sessionRequestDto
+            @RequestBody  Long quizId
     ) {
-        SessionResponseDto sessionResponseDto = quizSessionService.createSession(userDetails, sessionRequestDto);
+        SessionResponseDto sessionResponseDto = quizSessionService.getOrCreateSession(userDetails, quizId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(sessionResponseDto);
-    }
-
-    @PostMapping("/start")
-    public ResponseEntity<SessionResponseDto> startSession(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody  Long sessionId
-    ) {
-        SessionResponseDto sessionResponseDto = quizSessionService.startSession(userDetails, sessionId);
         return ResponseEntity.status(HttpStatus.CREATED).body(sessionResponseDto);
     }
 
