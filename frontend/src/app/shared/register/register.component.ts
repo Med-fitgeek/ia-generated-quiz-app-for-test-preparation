@@ -45,7 +45,7 @@ export class RegisterComponent {
 
     this.authService.register(rawCredentials).subscribe({
       next: (res) => {
-        this.authService.saveToken(res.token);
+        this.authService.saveToken(res.accesToken);
         this.successMessage = 'Enregistrement réussie, bienvenue!'; 
         this.router.navigate(['/dashboard']);
       },

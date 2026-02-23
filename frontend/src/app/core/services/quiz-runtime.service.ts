@@ -19,4 +19,5 @@ export class QuizRuntimeService {
   clear(): void {
     sessionStorage.removeItem(QUIZ_KEY);
   }
+
 }

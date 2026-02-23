@@ -26,12 +26,7 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'quiz-preview',
-    loadComponent: () => import('./features/quiz-preview/quiz-preview.component').then(m => m.QuizPreviewComponent),
-    canActivate: [authGuard]
-  },
-  {
-    path: 'quiz-player',
+    path: 'quiz-player/:id',
     loadComponent: () => import('./features/quiz-player/quiz-player.component').then(m => m.QuizPlayerComponent),
     canActivate: [authGuard]
   },

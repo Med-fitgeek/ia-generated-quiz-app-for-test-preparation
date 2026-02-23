@@ -68,7 +68,8 @@ export class QuizGenerateComponent implements OnInit {
       next: (res: GeneratedQuizDto) => {
         this.loading = false;
         this.quizRuntime.saveQuiz(res);
-        this.router.navigate(['/quiz-player']);
+        var quizId = res.quizId;
+        this.router.navigate(['/quiz-player', quizId]);
       },
       error: (err) => {
         this.loading = false;

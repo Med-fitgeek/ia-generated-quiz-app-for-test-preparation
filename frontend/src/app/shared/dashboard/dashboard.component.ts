@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
   }
 
   newQuiz(): void {
-    this.router.navigate(['/knowledge']);
+    this.router.navigate(['/source']);
   }
 
   openQuiz(quizId: number): void {

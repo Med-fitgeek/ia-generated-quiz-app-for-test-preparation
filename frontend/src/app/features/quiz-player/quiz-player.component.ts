@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { GeneratedQuizDto } from '../../core/models/generated-quiz-dto';
 import { GeneratedQuestion } from '../../core/models/generated-question.model';
 import { CommonModule, NgStyle } from '@angular/common';
 import { QuizRuntimeService } from '../../core/services/quiz-runtime.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SessionService } from '../../core/services/session.service';
-import { SessionRequestDto } from '../../core/models/session-request-dto.model';
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
 import { ResultResponseDto } from '../../core/models/result-response-dto.model';
 import { SubmitAnswerRequestDto } from '../../core/models/submit-answer-request-dto.models';
 import { SubmitSessionWrapperDto } from '../../core/models/submit-session-wrapper-dto';
+import { QuizService } from '../../core/services/quiz.service';
 
 type QuizState = 'READY' | 'IN_PROGRESS' | 'COMPLETED';
 
@@ -24,6 +24,8 @@ export class QuizPlayerComponent implements OnInit {
 
   quiz!: GeneratedQuizDto;
 
+  quizId!: number;
+
   state: QuizState = 'READY';
   error: string | null = null;
   sessionId!: number;
@@ -35,37 +37,66 @@ export class QuizPlayerComponent implements OnInit {
   constructor(
     private sessionService: SessionService, 
     private quizRuntime: QuizRuntimeService,
-    private router: Router
+    private quizService: QuizService,
+    private router: Router,
+    private route: ActivatedRoute,
   ) {}
 
-  ngOnInit(): void {
-  this.quiz = this.quizRuntime.loadQuiz() ?? {
-    quizId: 0,
-    generatedQuestions: []
-  };
-
-  if (!this.quiz.generatedQuestions.length) {
-    this.error = 'Quiz vide ou non fourni';
-    return;
+  @HostListener('window:beforeunload', ['$event'])
+  unload($event: any) {
+    if (this.state === 'IN_PROGRESS') {
+      $event.returnValue = true;
+     }
   }
 
-  this.selectedAnswers = new Array(this.quiz.generatedQuestions.length).fill(null);
-  this.state = 'READY';
-}
+  ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+
+    if (!idParam) {
+      this.error = 'Missing sourceId in route.';
+      return;
+    }
+
+    this.quizId = Number(idParam);
+
+    const cachedQuiz = this.quizRuntime.loadQuiz();
+
+    if (cachedQuiz) {
+      this.initializeQuiz(cachedQuiz);
+      return;
+    }
+
+    this.quizService.getQuizById(this.quizId).subscribe({
+      next: (res: GeneratedQuizDto) => {
+        this.initializeQuiz(res);
+      },
+      error: (err) => {
+        this.error =
+          err?.error?.message ||
+          'No quiz was found please return to quiz generation.';
+      }
+    });
+
+  }
+
+  private initializeQuiz(quiz: GeneratedQuizDto): void {
+    if (!quiz.generatedQuestions?.length) {
+        this.error = 'Quiz vide ou non fourni';
+        return;
+    }
+
+    this.quiz = quiz;
+    this.selectedAnswers = new Array(quiz.generatedQuestions.length).fill(null);
+    this.state = 'READY';
+  }
 
   
-  createQuiz(): void {
+  startOrResume(): void {
 
-    const payload: SessionRequestDto = {
-    quizId: this.quiz.quizId,
-    sessionStatus: 'CREATED',
-    duration: 1
-    };
-
-    this.sessionService.createSession(payload).subscribe({
+    this.sessionService.createSession(this.quiz.quizId).subscribe({
         next: (res: SessionResponseDto) => {
           this.sessionId =res.id
-          this.startSession(this.sessionId);
+          this.state = 'IN_PROGRESS';
         },
         error: (err) => {
           this.error = err?.error?.message || 'No quiz was created please return to quiz generation.';
@@ -73,16 +104,7 @@ export class QuizPlayerComponent implements OnInit {
       });
   }
 
-  startSession(id: number): void {
-    this.sessionService.startSession(id).subscribe({
-      error : (err) => {
-        this.error = err?.error?.message || 'Quiz start failed'
-      }
-    });
-
-    this.state = 'IN_PROGRESS';
-  }
-
+  
   get currentQuestion(): GeneratedQuestion {
     return this.quiz.generatedQuestions[this.questionIndex];
   }
