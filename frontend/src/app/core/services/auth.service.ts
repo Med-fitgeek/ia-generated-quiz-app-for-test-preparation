@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
+  private readonly apiUrl = environment.apiUrl;
   
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -13,11 +14,11 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.API_URL}/login`, credentials);
+    return this.http.post(`${this.apiUrl}/auth/login`, credentials);
   }
 
   register(data: { username: string; email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.API_URL}/register`, data);
+    return this.http.post(`${this.apiUrl}/auth/register`, data);
   }
 
   logout(): void {
