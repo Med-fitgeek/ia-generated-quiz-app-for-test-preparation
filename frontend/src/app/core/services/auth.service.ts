@@ -1,46 +1,79 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, tap, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = environment.apiUrl;
-  
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+
+  // Access token en mémoire
+  private accessToken: string | null = null;
+
+  // Observable pour savoir si l’utilisateur est connecté
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  /** LOGIN */
   login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, credentials);
+    return this.http.post(`${this.apiUrl}/auth/login`, credentials).pipe(
+      tap((res: any) => {
+        this.accessToken = res.accessToken;
+        // Ici, le refresh token peut être stocké dans un cookie HttpOnly via le backend
+        this.isAuthenticatedSubject.next(true);
+      })
+    );
   }
 
+  /** REGISTER */
   register(data: { username: string; email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register`, data);
+    return this.http.post(`${this.apiUrl}/auth/register`, data).pipe(
+      tap((res: any) => {
+        this.accessToken = res.accessToken;
+        this.isAuthenticatedSubject.next(true);
+      })
+    );
   }
 
+  /** LOGOUT */
   logout(): void {
-    localStorage.removeItem('token');
+    this.accessToken = null;
+    // Idéalement demander au backend de révoquer le refresh token
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem('token', token);
-    this.isAuthenticatedSubject.next(true);
+  /** GETTER access token */
+  getAccessToken(): string | null {
+    return this.accessToken;
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
+  /** REFRESH access token */
+  refreshAccessToken(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/refresh`, { refreshToken: this.getRefreshTokenFromCookie() }).pipe(
+      tap((res: any) => {
+        this.accessToken = res.accessToken;
+        this.isAuthenticatedSubject.next(true);
+      }),
+      catchError(err => {
+        this.logout();
+        return throwError(() => err);
+      })
+    );
   }
 
+  /** Ici, tu récupères le refresh token depuis un cookie HttpOnly via backend */
+  private getRefreshTokenFromCookie(): string {
+    // Si tu veux gérer côté front, mais idéalement c’est HttpOnly
+    return '';
+  }
+
+  /** VÉRIFIER SI CONNECTÉ */
   isLoggedIn(): boolean {
-    return this.hasToken();
-  }
-
-  private hasToken(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.accessToken;
   }
 }

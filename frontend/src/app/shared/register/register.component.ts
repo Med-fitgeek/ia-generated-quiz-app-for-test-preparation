@@ -45,9 +45,8 @@ export class RegisterComponent {
 
     this.authService.register(rawCredentials).subscribe({
       next: (res) => {
-        this.authService.saveToken(res.accesToken);
         this.successMessage = 'Enregistrement réussie, bienvenue!'; 
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.errorMessage = ('Email ou mot de passe invalide');
