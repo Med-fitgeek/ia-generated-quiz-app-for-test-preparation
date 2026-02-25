@@ -4,8 +4,10 @@ import com.fitgeek.IATestPreparator.dtos.LoginRequestDto;
 import com.fitgeek.IATestPreparator.dtos.LoginResponseDto;
 import com.fitgeek.IATestPreparator.dtos.RegisterRequestDto;
 import com.fitgeek.IATestPreparator.dtos.RegisterResponseDto;
+import com.fitgeek.IATestPreparator.entities.RefreshToken;
 import com.fitgeek.IATestPreparator.entities.User;
 import com.fitgeek.IATestPreparator.entities.enums.Role;
+import com.fitgeek.IATestPreparator.repositories.RefreshTokenRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.security.JwtUtil;
 import com.fitgeek.IATestPreparator.services.AuthService;
@@ -13,6 +15,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public RegisterResponseDto register(RegisterRequestDto registerRequestDto) {
@@ -54,18 +59,53 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalStateException ("Invalid credentials");
         }
 
-        String accessToken = jwtUtil.generateToken(new User(
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole())
-        );
+        // 1. Access token
+        String accessToken = jwtUtil.generateAccessToken(user);
 
-        // 5. Construction de la réponse
-        // ➜ Jamais retourner l’entité User
+        // 2. Refresh token
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .token(refreshToken)
+                .expiryDate(new Date(System.currentTimeMillis() + jwtUtil.getRefreshExpirationMs()))
+                .user(user)
+                .build();
+
+        refreshTokenRepository.save(refreshTokenEntity);
+
+
         return new LoginResponseDto(
                 accessToken,
+                refreshToken,
                 "Bearer",
-                jwtUtil.getExpirationInSeconds()
+                jwtUtil.getAccessExpirationInSeconds()
+        );
+    }
+
+    @Override
+    public LoginResponseDto refreshAccessToken(String refreshToken) {
+
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new IllegalStateException("Invalid refresh token");
+        }
+
+        // 2. Récupérer le refresh token côté serveur
+        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new IllegalStateException("Refresh token not found"));
+
+        if (storedToken.getExpiryDate().before(new Date())) {
+            throw new IllegalStateException("Refresh token expired");
+        }
+
+        User user = storedToken.getUser();
+        String newAccessToken = jwtUtil.generateAccessToken(user);
+
+        // 5. Retourner le nouveau token
+        return new LoginResponseDto(
+                newAccessToken,
+                refreshToken, // on peut renvoyer le même refresh token
+                "Bearer",
+                jwtUtil.getAccessExpirationInSeconds()
         );
     }
     
