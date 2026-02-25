@@ -39,7 +39,7 @@ public class QuizSession {
 
     private Integer correctCount;
     private Integer totalQuestions;
-    private Double scorePercentage;
+    private Long scorePercentage;
 
     @Column(nullable = false)
     private LocalDateTime startedAt;

@@ -129,7 +129,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
         }
 
         double rate = (correctCount * 100.0) / questions.size();
-
+        long roundedRate = Math.round(rate);
         Duration duration = Duration.between(
                 session.getStartedAt(),
                 LocalDateTime.now()
@@ -137,7 +137,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         session.setCorrectCount(correctCount);
         session.setTotalQuestions(questions.size());
-        session.setScorePercentage(rate);
+        session.setScorePercentage(roundedRate);
         session.setDurationInSeconds(duration.getSeconds());
         session.setCompletedAt(LocalDateTime.now());
         session.setStatus(SessionStatus.COMPLETED);
@@ -147,7 +147,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
         return new ResultResponseDto(
                 correctCount,
                 questions.size(),
-                rate
+                roundedRate
         );
     }
 
