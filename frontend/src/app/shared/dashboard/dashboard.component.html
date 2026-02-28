@@ -1,23 +1,27 @@
-<div class="container flex-col gap-5">
-  <h1 class="title">My Quizzes</h1>
+<div class="dashboard-layout">
 
-  <div class="flex-between">
-    <p class="muted">Manage your quiz sessions</p>
-    <button class="btn btn-primary" (click)="newQuiz()">+ New Quiz</button>
-  </div>
+  <app-sidebar></app-sidebar>
 
-  <div class="flex-col gap-4">
-    <div class="card" *ngFor="let quiz of quizzes">
-      <h3 class="text-accent">{{ quiz.title }}</h3>
+  <div class="dashboard-main">
 
-      <p>Sessions: {{ quiz.sessionsCount }}</p>
-      <p class="muted">Last played: {{ quiz.lastPlayedAt }}</p>
+    <div class="dashboard-header">
+      <div>
+        <h2>Dashboard</h2>
+        <p class="muted">Bienvenue, Medoune</p>
+      </div>
 
-      <div style="margin-top: 16px;">
-        <button class="btn btn-secondary" (click)="openQuiz(quiz.quizId)">
-          Play / Resume
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="newQuiz()">
+          + Nouveau Quiz
         </button>
+        
+        <div class="profile-badge">
+          M
+        </div>
       </div>
     </div>
+
+    <router-outlet></router-outlet>
+
   </div>
 </div>

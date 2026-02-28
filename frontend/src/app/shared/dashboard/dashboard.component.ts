@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { QuizSummary } from '../../core/models/quiz-summary.model';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SidebarComponent, RouterOutlet],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -19,21 +20,6 @@ export class DashboardComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    // TODO: remplacer par appel API
-    this.quizzes = [
-      {
-        quizId: 1,
-        title: 'Java Basics',
-        sessionsCount: 3,
-        lastPlayedAt: '2026-02-10',
-      },
-      {
-        quizId: 2,
-        title: 'Spring Security',
-        sessionsCount: 1,
-        lastPlayedAt: '2026-02-08',
-      },
-    ];
   }
 
   newQuiz(): void {
