@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './shared/home/home.component';
 import { authGuard } from './core/guards/auth.guards';
+import { DashboardHomeComponent } from './shared/dashboard-home/dashboard-home.component';
+import { AccountComponent } from './shared/account/account.component';
 
 export const routes: Routes = [
   {
@@ -33,7 +35,21 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./shared/dashboard/dashboard.component').then(m => m.DashboardComponent),
-    canActivate: [authGuard]
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        component: DashboardHomeComponent
+      },
+      {
+        path: 'quizzes',
+        component: DashboardHomeComponent
+      },
+      {
+        path: 'account',
+        component: AccountComponent
+      }
+    ]
   }
 ];
 
