@@ -1,98 +1,100 @@
+<div class="quiz-page" *ngIf="state !== null">
 
-<!-- Error -->
-    <div *ngIf="error" class="alert alert-error">
-      {{ error }}
-    </div>
-    
-<div class="container card-section" *ngIf="state === 'READY'">
-  <div class="card text-center">
-    <h1 class="text-accent">{{'Quiz prêt' }}</h1>
-    <p class="muted">
-      Prêt à commencer ?
-    </p>
-
-    <button class="btn btn-primary" style="margin-top: 24px;" (click)="startOrResume()">
-      Démarrer le quiz
-    </button>
+  <!-- ERROR -->
+  <div *ngIf="error" class="alert alert-error">
+    {{ error }}
   </div>
-</div>
 
-
-<div class="container card-section" *ngIf="state === 'IN_PROGRESS'">
-
-  <div class="card">
-
-    <h2 class="text-accent">
-      Question {{ questionIndex + 1 }} / {{ quiz.generatedQuestions.length }}
-    </h2>
-
-    <p style="font-size: 1.2rem; margin-bottom: 24px;">
-      {{ currentQuestion.statement }}
-    </p>
-
-    <div class="flex-col gap-3">
-
-      <button
-        class="btn btn-secondary"
-        *ngFor="let choice of currentQuestion.choices; let i = index"
-        (click)="selectAnswer(i)"
-        [ngStyle]="{
-          'border-color': isSelected(i) ? 'var(--color-primary)' : '',
-          'box-shadow': isSelected(i) ? 'var(--shadow-glow)' : ''
-        }"
-      >
-        {{ choice }}
+  <!-- READY -->
+  <div *ngIf="state === 'READY'" class="quiz-center">
+    <div class="quiz-intro">
+      <h1 class="gradient-text">Quiz prêt</h1>
+      <p>Prêt à tester vos connaissances ?</p>
+      <button class="btn btn-primary big-btn" (click)="startOrResume()">
+        Commencer
       </button>
-
     </div>
-
-    <div class="flex-between" style="margin-top: 32px;">
-
-      <button
-        class="btn btn-secondary"
-        (click)="previous()"
-        [disabled]="questionIndex === 0"
-      >
-        Précédent
-      </button>
-
-      <button
-        class="btn btn-primary"
-        *ngIf="!isLastQuestion()"
-        (click)="next()"
-        [disabled]="selectedAnswers[questionIndex] === null"
-      >
-        Suivant
-      </button>
-
-      <button
-        class="btn btn-primary"
-        *ngIf="isLastQuestion()"
-        (click)="submitAnswers()"
-        [disabled]="selectedAnswers[questionIndex] === null"
-      >
-        Terminer le quiz
-      </button>
-
-    </div>
-
   </div>
-</div>
 
-<!-- Écran de fin -->
-<div class="container card-section" *ngIf="state === 'COMPLETED'">
+  <!-- IN PROGRESS -->
+  <div *ngIf="state === 'IN_PROGRESS'" class="quiz-shell">
 
-  <div class="card">
-    <h1>Quiz terminé 🎉</h1>
-    <p>Merci d’avoir complété le quiz.</p>
+    <!-- Progress bar -->
+    <div class="quiz-progress">
+      <div class="progress-bar">
+        <div class="progress-fill"
+             [style.width.%]="(questionIndex / quiz.generatedQuestions.length) * 100">
+        </div>
+      </div>
+      <span>
+        Question {{ questionIndex + 1 }} / {{ quiz.generatedQuestions.length }}
+      </span>
+    </div>
 
-    <p class="muted">
-      Vous avez <span class="text-accent">{{rate}} %</span>  de reussite
-    </p>
+    <!-- Card -->
+    <div class="quiz-card">
 
-    <button class="btn btn-primary" style="margin-top: 24px;">
-      Voir mon rapport
-    </button>
+      <h2 class="quiz-question">
+        {{ currentQuestion.statement }}
+      </h2>
+
+      <div class="quiz-choices">
+        <button
+          *ngFor="let choice of currentQuestion.choices; let i = index"
+          class="choice-tile"
+          [class.selected]="isSelected(i)"
+          (click)="selectAnswer(i)"
+        >
+          {{ choice }}
+        </button>
+      </div>
+
+      <div class="quiz-navigation">
+        <button
+          class="btn btn-secondary"
+          (click)="previous()"
+          [disabled]="questionIndex === 0">
+          Précédent
+        </button>
+
+        <button
+          class="btn btn-primary"
+          *ngIf="!isLastQuestion()"
+          (click)="next()"
+          [disabled]="selectedAnswers[questionIndex] === null">
+          Suivant
+        </button>
+
+        <button
+          class="btn btn-primary"
+          *ngIf="isLastQuestion()"
+          (click)="submitAnswers()"
+          [disabled]="selectedAnswers[questionIndex] === null">
+          Terminer
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COMPLETED -->
+  <div *ngIf="state === 'COMPLETED'" class="quiz-center">
+
+    <div class="quiz-result">
+
+      <div class="score-circle" [style.--score]="rate">
+        <span>{{ rate }}%</span>
+      </div>
+
+      <h1>Quiz terminé</h1>
+      <p>Voici votre performance globale.</p>
+
+      <button class="btn btn-primary big-btn">
+        Voir mon rapport
+      </button>
+
+    </div>
+
   </div>
 
 </div>

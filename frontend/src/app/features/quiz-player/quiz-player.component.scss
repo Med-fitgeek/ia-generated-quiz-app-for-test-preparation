@@ -1,0 +1,126 @@
+.quiz-page {
+  min-height: 100vh;
+  padding: 60px 20px;
+  background: linear-gradient(180deg, #fefefe 0%, #f3fbfb 100%);
+}
+
+.quiz-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+}
+
+.quiz-intro,
+.quiz-result {
+  background: white;
+  padding: 60px;
+  border-radius: 24px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.06);
+}
+
+
+.quiz-progress {
+  max-width: 800px;
+  margin: 0 auto 30px auto;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e8edf2;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  transition: width 0.4s ease;
+}
+
+
+.quiz-card {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  padding: 50px;
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+}
+
+.quiz-question {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+}
+
+.quiz-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.choice-tile {
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 2px solid #e8edf2;
+  background: #fafbfc;
+  text-align: left;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.choice-tile:hover {
+  border-color: var(--color-secondary);
+  background: rgba(78,205,196,0.05);
+}
+
+.choice-tile.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 20px rgba(255,107,107,0.15);
+  background: rgba(255,107,107,0.05);
+}
+
+
+.quiz-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.score-circle {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #FF6B6B calc(var(--score) * 1%),
+    #e8edf2 0
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px auto;
+  position: relative;
+}
+
+.score-circle::before {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 50%;
+}
+
+.score-circle span {
+  position: relative;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.big-btn {
+  padding: 18px 40px;
+  font-size: 1.1rem;
+}
