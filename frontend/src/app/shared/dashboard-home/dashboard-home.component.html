@@ -1,0 +1,51 @@
+<!-- STATS -->
+<div class="stats-grid">
+
+  <div class="stat-card">
+    <h3>{{ totalQuizzes }}</h3>
+    <p>Quizzes créés</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>{{ totalSessions }}</h3>
+    <p>Sessions jouées</p>
+  </div>
+
+  <div class="stat-card">
+    <h3>{{ averageScore }}%</h3>
+    <p>Score moyen</p>
+  </div>
+
+</div>
+
+<!-- QUIZ GRID -->
+<div class="quiz-grid">
+
+  <div class="quiz-tile" *ngFor="let quiz of quizzes">
+
+    <div class="quiz-tile-header">
+      <h3>{{ quiz.title }}</h3>
+      <span class="quiz-date">
+        {{ quiz.lastPlayedAt }}
+      </span>
+    </div>
+
+    <div class="quiz-meta">
+      {{ quiz.sessionsCount }} sessions
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn btn-secondary"
+              (click)="startSession(quiz.quizId)">
+        Nouvelle session
+      </button>
+
+      <button class="btn btn-primary"
+              (click)="openQuiz(quiz.quizId)">
+        Voir
+      </button>
+    </div>
+
+  </div>
+
+</div>
