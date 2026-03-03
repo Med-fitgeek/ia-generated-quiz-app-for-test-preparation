@@ -16,7 +16,7 @@ type QuizState = 'READY' | 'IN_PROGRESS' | 'COMPLETED';
 @Component({
   selector: 'app-quiz-player',
   standalone: true,
-  imports: [CommonModule, NgStyle],
+  imports: [CommonModule],
   templateUrl: './quiz-player.component.html',
   styleUrl: './quiz-player.component.scss'
 })
@@ -128,16 +128,13 @@ export class QuizPlayerComponent implements OnInit {
   
   submitAnswers(): void {
 
-    const answers: SubmitAnswerRequestDto = {
+    const request: SubmitAnswerRequestDto = {
       answers: this.selectedAnswers
     };
 
-    const payload: SubmitSessionWrapperDto = {
-      sessionId: this.sessionId,
-      sessionRequestDto: answers
-    };
+    
 
-    this.sessionService.submitSession(payload).subscribe({
+    this.sessionService.submitSession(this.sessionId, request).subscribe({
       next: (res: ResultResponseDto) => {
         this.rate = res.rate;
         this.state = 'COMPLETED';

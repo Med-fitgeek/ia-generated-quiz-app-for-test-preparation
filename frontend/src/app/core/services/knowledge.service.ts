@@ -16,7 +16,7 @@ export class KnowledgeService {
     const formData = new FormData();
     formData.append('file', file);
 
-    return this.http.post<KnowledgeNormalizedResponse>(`${this.apiUrl}/source/upload`, formData);
+    return this.http.post<KnowledgeNormalizedResponse>(`${this.apiUrl}/sources/upload`, formData);
   }
 
   uploadStructuredText(dto: StructuredTextDto): Observable<KnowledgeNormalizedResponse> {
@@ -27,6 +27,6 @@ export class KnowledgeService {
     formData.append('strucuturedTextDto.objectives', dto.objectives);
     formData.append('strucuturedTextDto.additionalNotes', dto.additionalNotes || '');
 
-    return this.http.post<KnowledgeNormalizedResponse>(`${this.apiUrl}/source/upload`, formData);
+    return this.http.post<KnowledgeNormalizedResponse>(`${this.apiUrl}/sources/upload`, formData);
   }
 }
