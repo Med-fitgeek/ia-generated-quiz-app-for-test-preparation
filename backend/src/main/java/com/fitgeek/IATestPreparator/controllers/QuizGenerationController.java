@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/quiz-generation")
+@RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
 public class QuizGenerationController {
@@ -29,7 +29,7 @@ public class QuizGenerationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 
-    @GetMapping("/quiz/{quizId}")
+    @GetMapping("/{quizId}")
     public ResponseEntity<GeneratedQuizDto> getQuizById(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long quizId
@@ -38,7 +38,7 @@ public class QuizGenerationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 
-    @GetMapping("/quiz/all")
+    @GetMapping("/all")
     public ResponseEntity<List<GeneratedQuizDto>> getAllQuizzes(
             @AuthenticationPrincipal UserDetails userDetails
     ){
@@ -48,7 +48,7 @@ public class QuizGenerationController {
         return ResponseEntity.ok(quizzes);
     }
 
-    @GetMapping("/quiz/{quizId}")
+    @DeleteMapping("/{quizId}")
     public ResponseEntity<HttpStatus> deleteQuiz(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable Long quizId
