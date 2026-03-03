@@ -3,7 +3,6 @@ package com.fitgeek.IATestPreparator.services.impl;
 import com.fitgeek.IATestPreparator.dtos.LoginRequestDto;
 import com.fitgeek.IATestPreparator.dtos.LoginResponseDto;
 import com.fitgeek.IATestPreparator.dtos.RegisterRequestDto;
-import com.fitgeek.IATestPreparator.dtos.RegisterResponseDto;
 import com.fitgeek.IATestPreparator.entities.RefreshToken;
 import com.fitgeek.IATestPreparator.entities.User;
 import com.fitgeek.IATestPreparator.entities.enums.Role;
@@ -13,6 +12,9 @@ import com.fitgeek.IATestPreparator.security.JwtUtil;
 import com.fitgeek.IATestPreparator.services.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,28 +31,55 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public RegisterResponseDto register(RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<LoginResponseDto> register(RegisterRequestDto dto) {
 
-        if (userRepository.existsByEmail(registerRequestDto.email()))
-            throw new IllegalStateException ("Email already exists");
+        if (userRepository.existsByEmail(dto.email()))
+            throw new IllegalStateException("Email already exists");
 
-        if (userRepository.existsByUsername(registerRequestDto.username()))
-            throw new IllegalStateException ("Username already exists");
+        if (userRepository.existsByUsername(dto.username()))
+            throw new IllegalStateException("Username already exists");
 
         User user = User.builder()
-                .username(registerRequestDto.username())
-                .email(registerRequestDto.email())
-                .password(passwordEncoder.encode(registerRequestDto.password()))
+                .username(dto.username())
+                .email(dto.email())
+                .password(passwordEncoder.encode(dto.password()))
                 .role(Role.USER)
                 .build();
 
-        User savedUser = userRepository.save(user);
+        userRepository.save(user);
 
-        return new RegisterResponseDto(savedUser.getId(), savedUser.getUsername());
+        String accessToken = jwtUtil.generateAccessToken(user);
+        String refreshToken = jwtUtil.generateRefreshToken(user);
+
+        RefreshToken entity = RefreshToken.builder()
+                .token(refreshToken)
+                .expiryDate(new Date(System.currentTimeMillis() + jwtUtil.getRefreshExpirationMs()))
+                .user(user)
+                .build();
+
+        refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.save(entity);
+
+        // 🍪 Cookie HttpOnly
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false) // true en prod HTTPS
+                .path("/")
+                .maxAge(jwtUtil.getRefreshExpirationMs() / 1000)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new LoginResponseDto(
+                        accessToken,
+                        "Bearer",
+                        jwtUtil.getAccessExpirationInSeconds()
+                ));
     }
 
     @Override
-    public LoginResponseDto login(LoginRequestDto dto) {
+    public ResponseEntity<LoginResponseDto> login(LoginRequestDto dto) {
 
         User user = userRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new IllegalStateException ("Invalid credentials"));
@@ -59,53 +88,57 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalStateException ("Invalid credentials");
         }
 
-        // 1. Access token
         String accessToken = jwtUtil.generateAccessToken(user);
-
-        // 2. Refresh token
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
-        RefreshToken refreshTokenEntity = RefreshToken.builder()
+        RefreshToken entity = RefreshToken.builder()
                 .token(refreshToken)
                 .expiryDate(new Date(System.currentTimeMillis() + jwtUtil.getRefreshExpirationMs()))
                 .user(user)
                 .build();
 
-        refreshTokenRepository.save(refreshTokenEntity);
+        refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.save(entity);
 
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false) // true en prod
+                .path("/")
+                .maxAge(jwtUtil.getRefreshExpirationMs() / 1000)
+                .sameSite("Lax")
+                .build();
 
-        return new LoginResponseDto(
-                accessToken,
-                refreshToken,
-                "Bearer",
-                jwtUtil.getAccessExpirationInSeconds()
-        );
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(new LoginResponseDto(
+                        accessToken,
+                        "Bearer",
+                        jwtUtil.getAccessExpirationInSeconds()
+                ));
     }
 
     @Override
-    public LoginResponseDto refreshAccessToken(String refreshToken) {
+    public ResponseEntity<LoginResponseDto> refresh(String refreshToken) {
 
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new IllegalStateException("Invalid refresh token");
         }
 
-        // 2. Récupérer le refresh token côté serveur
-        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+        RefreshToken stored = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new IllegalStateException("Refresh token not found"));
 
-        if (storedToken.getExpiryDate().before(new Date())) {
+        if (stored.getExpiryDate().before(new Date())) {
             throw new IllegalStateException("Refresh token expired");
         }
 
-        User user = storedToken.getUser();
-        String newAccessToken = jwtUtil.generateAccessToken(user);
+        String newAccessToken = jwtUtil.generateAccessToken(stored.getUser());
 
-        // 5. Retourner le nouveau token
-        return new LoginResponseDto(
-                newAccessToken,
-                refreshToken, // on peut renvoyer le même refresh token
-                "Bearer",
-                jwtUtil.getAccessExpirationInSeconds()
+        return ResponseEntity.ok(
+                new LoginResponseDto(
+                        newAccessToken,
+                        "Bearer",
+                        jwtUtil.getAccessExpirationInSeconds()
+                )
         );
     }
     

@@ -5,6 +5,7 @@ import com.fitgeek.IATestPreparator.entities.enums.Role;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class JwtUtil {
     @Value("${jwt.access-expiration-ms}")
     private long accessExpirationMs;
 
+    @Getter
     @Value("${jwt.refresh-expiration-ms}")
     private long refreshExpirationMs;
 
@@ -70,8 +72,4 @@ public class JwtUtil {
         return d.getSeconds();
     }
 
-    public long getRefreshExpirationMs() {
-        Duration d = Duration.ofMillis(refreshExpirationMs);
-        return d.getSeconds();
-    }
 }

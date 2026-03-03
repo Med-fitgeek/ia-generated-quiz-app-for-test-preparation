@@ -1,7 +1,9 @@
 package com.fitgeek.IATestPreparator.entities;
 import com.fitgeek.IATestPreparator.entities.enums.Role;
+import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
