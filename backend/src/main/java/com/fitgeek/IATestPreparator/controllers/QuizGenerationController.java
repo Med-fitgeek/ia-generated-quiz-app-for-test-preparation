@@ -11,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/quiz-generation")
 @RequiredArgsConstructor
@@ -27,12 +29,34 @@ public class QuizGenerationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 
-    @GetMapping("/quiz/{id}")
+    @GetMapping("/quiz/{quizId}")
     public ResponseEntity<GeneratedQuizDto> getQuizById(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable Long id
+            @PathVariable Long quizId
     ){
-        GeneratedQuizDto quizDto = quizGenerationService.getQuizById(id, userDetails);
+        GeneratedQuizDto quizDto = quizGenerationService.getQuizById(quizId, userDetails);
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
+
+    @GetMapping("/quiz/all")
+    public ResponseEntity<List<GeneratedQuizDto>> getAllQuizzes(
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+        List<GeneratedQuizDto> quizzes =
+                quizGenerationService.getAllQuizzesByOwner(userDetails);
+
+        return ResponseEntity.ok(quizzes);
+    }
+
+    @GetMapping("/quiz/{quizId}")
+    public ResponseEntity<HttpStatus> deleteQuiz(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long quizId
+    ){
+        quizGenerationService.deleteQuiz(quizId, userDetails);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

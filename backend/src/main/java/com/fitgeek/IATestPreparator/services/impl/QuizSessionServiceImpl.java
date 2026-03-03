@@ -61,25 +61,6 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
 
     @Override
-    public SessionResponseDto markFailed(UserDetails userDetails, Long sessionId) {
-
-        userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
-
-        QuizSession session = quizSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new BusinessException("Quiz not found"));
-
-        session.setStatus(SessionStatus.FAILED);
-        session.setUpdatedAt(LocalDateTime.now());
-        quizSessionRepository.save(session);
-
-        return new SessionResponseDto(
-                session.getId()
-        );
-    }
-
-
-    @Override
     public ResultResponseDto submitSession(
             UserDetails userDetails,
             Long sessionId,

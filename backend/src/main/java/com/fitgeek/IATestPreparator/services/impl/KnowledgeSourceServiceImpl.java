@@ -11,7 +11,7 @@ import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.DocumentProcessingService;
 import com.fitgeek.IATestPreparator.services.KnowledgeSourceService;
 import com.fitgeek.IATestPreparator.services.StorageService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

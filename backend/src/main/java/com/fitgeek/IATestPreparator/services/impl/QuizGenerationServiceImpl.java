@@ -1,7 +1,5 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitgeek.IATestPreparator.Prompting.Impl.PromptV1Strategy;
 import com.fitgeek.IATestPreparator.Prompting.PromptStrategy;
 import com.fitgeek.IATestPreparator.Utils.GeneratedQuizValidator;
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuestionDto;
@@ -17,17 +15,17 @@ import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.StructuredOutputValidationAdvisor;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     private final ChatClient chatClient;
@@ -37,118 +35,133 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
     private final KnowledgeSourceRepository sourceRepository;
 
 
-    public QuizGenerationServiceImpl(ChatClient.Builder chatClientBuilder,
-                                     PromptStrategy promptStrategy,
-                                     ObjectMapper objectMapper,
-                                     QuizRepository quizRepository,
-                                     UserRepository userRepository,
-                                     KnowledgeSourceRepository sourceRepository) {
-        var validationAdvisor = StructuredOutputValidationAdvisor.builder()
-                .objectMapper(objectMapper)
-                .outputType(new ParameterizedTypeReference<GeneratedQuizDto>() {})
-                .maxRepeatAttempts(3)
-                .build();
-
-        this.chatClient = chatClientBuilder.defaultAdvisors(validationAdvisor).build();
-        this.promptStrategy = promptStrategy;
-        this.quizRepository = quizRepository;
-        this.userRepository = userRepository;
-        this.sourceRepository = sourceRepository;
-    }
-
     @Override
+    @Transactional
     public GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto,
                                          UserDetails userDetails) {
 
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User owner = getUser(userDetails);
 
-        KnowledgeSource source = sourceRepository
-                .findById(requestDto.sourceId())
-                .orElseThrow(() -> new BusinessException("KnowledgeSource not found"));
+        KnowledgeSource source = sourceRepository.findByIdAndOwnerId(requestDto.sourceId(), owner.getId())
+                .orElseThrow(() -> new BusinessException("KnowledgeSource not found or access denied"));
 
-        if (!source.getOwner().getId().equals(owner.getId())) {
-            throw new BusinessException("You do not own this knowledge source");
-        }
-
-        String systemInstructions = promptStrategy.buildPrompt(requestDto.numberOfQuestions(), Difficulty.valueOf(requestDto.difficulty()));
+        String systemInstructions = promptStrategy.buildPrompt(
+                requestDto.numberOfQuestions(),
+                Difficulty.valueOf(requestDto.difficulty())
+        );
 
         try {
-            GeneratedQuizDto generatedQuizDto = chatClient.prompt()
+
+            GeneratedQuizDto generatedQuiz = chatClient.prompt()
                     .system(systemInstructions)
                     .user(source.getNormalizedContent())
-                    // .entity() takes care of: formatting, parsing and mapping
                     .call()
                     .entity(GeneratedQuizDto.class);
 
-            GeneratedQuizValidator.validate(generatedQuizDto, requestDto.numberOfQuestions());
+            GeneratedQuizValidator.validate(
+                    generatedQuiz,
+                    requestDto.numberOfQuestions()
+            );
 
-            Quiz quiz = Quiz.builder()
-                    .owner(owner)
-                    .sourceChecksum(source.getChecksum())
-                    .generatorVersion(PromptV1Strategy.class.getName())
-                    .build();
-
-            generatedQuizDto.generatedQuestions().forEach(dto -> {
-                Question question = Question.builder()
-                        .statement(dto.statement())
-                        .choices(dto.choices())
-                        .correctIndex(dto.correctIndex())
-                        .explanation(dto.explanation())
-                        .sourceQuote(dto.sourceQuote())
-                        .build();
-
-                quiz.addQuestion(question);
-            });
+            Quiz quiz = buildQuiz(owner, source, generatedQuiz);
 
             Quiz savedQuiz = quizRepository.save(quiz);
 
-
-            return new GeneratedQuizDto(
-                    savedQuiz.getId(),
-                    generatedQuizDto.generatedQuestions()
-            );
+            return mapToDto(savedQuiz);
 
         } catch (Exception e) {
-            // Spring AI lèvera une exception si le retry échoue ou si le format est invalide
-            throw new BusinessException("IA could not generate a valide quiz : " + e.getMessage());
+            throw new BusinessException("AI quiz generation failed" + e);
         }
     }
 
     @Override
-    public GeneratedQuizDto getQuizById(Long id, UserDetails userDetails) {
+    @Transactional(readOnly = true)
+    public GeneratedQuizDto getQuizById(Long quizId, UserDetails userDetails) {
 
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User owner = getUser(userDetails);
 
-        try {
+        Quiz quiz = quizRepository
+                .findByIdAndOwnerId(quizId, owner.getId())
+                .orElseThrow(() -> new BusinessException("Quiz not found or access denied"));
 
-            Quiz savedQuiz = quizRepository.findById(id)
-                    .orElseThrow(() -> new BusinessException("Quiz not found"));
-
-            if (!savedQuiz.getOwner().getId().equals(owner.getId())) {
-                throw new BusinessException("Access denied");
-            }
-
-            List<GeneratedQuestionDto> questionDtos = savedQuiz.getQuestions()
-                    .stream()
-                    .map(question -> GeneratedQuestionDto.builder()
-                            .statement(question.getStatement())
-                            .choices(question.getChoices())
-                            .correctIndex(question.getCorrectIndex())
-                            .explanation(question.getExplanation())
-                            .sourceQuote(question.getSourceQuote())
-                            .build())
-                    .toList();
-
-            return new GeneratedQuizDto(savedQuiz.getId(), questionDtos);
-
-        } catch (Exception e) {
-            throw new BusinessException("IA could not get a quiz : " + e.getMessage());
-        }
-
-
-
+        return mapToDto(quiz);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<GeneratedQuizDto> getAllQuizzesByOwner(UserDetails userDetails) {
+
+        User owner = getUser(userDetails);
+
+        List<Quiz> quizzes = quizRepository.findAllByOwnerId(owner.getId());
+
+        return quizzes.stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteQuiz(Long quizId, UserDetails userDetails) {
+
+        User owner = getUser(userDetails);
+
+        Quiz quiz = quizRepository
+                .findByIdAndOwnerId(quizId, owner.getId())
+                .orElseThrow(() -> new BusinessException("Quiz not found or access denied"));
+
+        quizRepository.delete(quiz);
+}
+
+
+    //------------------------------------------------------
+    // Util Methods
+    //-------------------------------------------------------
+
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+    }
+
+
+    private Quiz buildQuiz(User owner,
+                           KnowledgeSource source,
+                           GeneratedQuizDto generatedQuiz) {
+
+        Quiz quiz = Quiz.builder()
+                .owner(owner)
+                .sourceChecksum(source.getChecksum())
+                .generatorVersion(promptStrategy.getClass().getSimpleName())
+                .build();
+
+        generatedQuiz.generatedQuestions().forEach(dto -> {
+            Question question = Question.builder()
+                    .statement(dto.statement())
+                    .choices(dto.choices())
+                    .correctIndex(dto.correctIndex())
+                    .explanation(dto.explanation())
+                    .sourceQuote(dto.sourceQuote())
+                    .build();
+
+            quiz.addQuestion(question);
+        });
+
+        return quiz;
+    }
+
+    private GeneratedQuizDto mapToDto(Quiz quiz) {
+
+        List<GeneratedQuestionDto> questionDtos = quiz.getQuestions()
+                .stream()
+                .map(question -> GeneratedQuestionDto.builder()
+                        .statement(question.getStatement())
+                        .choices(question.getChoices())
+                        .correctIndex(question.getCorrectIndex())
+                        .explanation(question.getExplanation())
+                        .sourceQuote(question.getSourceQuote())
+                        .build())
+                .toList();
+
+        return new GeneratedQuizDto(quiz.getId(), questionDtos);
+    }
 }

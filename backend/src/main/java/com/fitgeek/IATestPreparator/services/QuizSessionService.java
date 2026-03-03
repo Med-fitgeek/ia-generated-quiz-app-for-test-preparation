@@ -10,8 +10,6 @@ public interface QuizSessionService {
 
     SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId);
 
-    SessionResponseDto markFailed(UserDetails userDetails, Long sessionId);
-
     ResultResponseDto submitSession(
             UserDetails userDetails,
             Long sessionId,
