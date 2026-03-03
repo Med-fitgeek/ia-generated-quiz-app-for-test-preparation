@@ -1,7 +1,6 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
 import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
-import com.fitgeek.IATestPreparator.dtos.SessionRequestDto;
 import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
 import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
 import com.fitgeek.IATestPreparator.entities.*;
@@ -11,7 +10,7 @@ import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,83 +18,142 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class QuizSessionServiceImpl implements QuizSessionService {
 
     private final QuizSessionRepository quizSessionRepository;
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
 
+    //------------------------------------------------------
+    // Create or Resume Session
+    //------------------------------------------------------
     @Override
+    @Transactional
     public SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId) {
 
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+        User user = getUser(userDetails);
 
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new BusinessException("Quiz not found"));
+        Quiz quiz = quizRepository
+                .findByIdAndOwnerId(quizId, user.getId())
+                .orElseThrow(() -> new BusinessException("Quiz not found or access denied"));
 
-        Optional<QuizSession> existing =
-                quizSessionRepository.findActiveSession(owner.getId(), quiz.getId());
+        return quizSessionRepository
+                .findActiveSession(user.getId(), quiz.getId())
+                .map(session -> new SessionResponseDto(session.getId()))
+                .orElseGet(() -> createNewSession(user, quiz));
+    }
 
-        if (existing.isPresent()) {
-            return new SessionResponseDto(existing.get().getId());
-        }
+    private SessionResponseDto createNewSession(User user, Quiz quiz) {
 
         QuizSession session = QuizSession.builder()
-                .user(owner)
+                .user(user)
                 .quiz(quiz)
                 .status(SessionStatus.CREATED)
                 .build();
 
-        QuizSession savedSession = quizSessionRepository.save(session);
+        QuizSession saved = quizSessionRepository.save(session);
 
-        return new SessionResponseDto(
-                savedSession.getId()
-        );
+        return new SessionResponseDto(saved.getId());
     }
 
+    //------------------------------------------------------
+    // Submit Session
+    //------------------------------------------------------
 
     @Override
+    @Transactional
     public ResultResponseDto submitSession(
             UserDetails userDetails,
             Long sessionId,
             SubmitSessionRequestDto request
     ) {
 
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+        User user = getUser(userDetails);
 
-        QuizSession session = quizSessionRepository.findById(sessionId)
-                .orElseThrow(() -> new BusinessException("Session not found"));
+        QuizSession session = quizSessionRepository
+                .findByIdAndUserId(sessionId, user.getId())
+                .orElseThrow(() -> new BusinessException("Session not found or access denied"));
 
-        if (!session.getUser().getId().equals(user.getId())) {
-            throw new BusinessException("Unauthorized session access");
+        validateSessionState(session);
+        validateAnswerCount(session, request);
+
+        int correctCount = processAnswers(session, request);
+
+        long roundedRate = calculateScore(correctCount, session.getQuiz().getQuestions().size());
+
+        long duration = Duration.between(session.getStartedAt(), LocalDateTime.now())
+                .getSeconds();
+
+        finalizeSession(session, correctCount, roundedRate, duration);
+
+        return new ResultResponseDto(
+                correctCount,
+                session.getTotalQuestions(),
+                roundedRate
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SessionResponseDto getSessionById(Long sessionId, UserDetails userDetails) {
+
+        User user = getUser(userDetails);
+
+        QuizSession session = quizSessionRepository
+                .findByIdAndUserId(sessionId, user.getId())
+                .orElseThrow(() -> new BusinessException("Session not found or access denied"));
+
+        return mapToSessionDto(session);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SessionResponseDto> getAllSessionsByOwner(UserDetails userDetails) {
+
+        User user = getUser(userDetails);
+
+        List<QuizSession> sessions =
+                quizSessionRepository.findAllByUserId(user.getId());
+
+        return sessions.stream()
+                .map(this::mapToSessionDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteSession(Long sessionId, UserDetails userDetails) {
+
+        User user = getUser(userDetails);
+
+        int deleted = quizSessionRepository
+                .deleteByIdAndUserId(sessionId, user.getId());
+
+        if (deleted == 0) {
+            throw new BusinessException("Session not found or access denied");
         }
+    }
 
-        if (session.getStatus() == SessionStatus.COMPLETED) {
-            throw new BusinessException("Session already submitted");
-        }
 
+    //------------------------------------------------------
+    // Internal Logic
+    //------------------------------------------------------
+
+    private int processAnswers(QuizSession session, SubmitSessionRequestDto request) {
 
         List<Question> questions = session.getQuiz().getQuestions();
-
-        if (questions.size() != request.answers().size()) {
-            throw new BusinessException("Answer count mismatch");
-        }
-
         int correctCount = 0;
 
         for (int i = 0; i < questions.size(); i++) {
+
             Question question = questions.get(i);
             Integer selectedIndex = request.answers().get(i);
 
-            boolean isCorrect = selectedIndex != null &&
-                    selectedIndex == question.getCorrectIndex();
+            boolean isCorrect = selectedIndex != null
+                    && selectedIndex.equals(question.getCorrectIndex());
 
             if (isCorrect) correctCount++;
 
@@ -109,27 +167,61 @@ public class QuizSessionServiceImpl implements QuizSessionService {
             session.getAnswers().add(answer);
         }
 
-        double rate = (correctCount * 100.0) / questions.size();
-        long roundedRate = Math.round(rate);
-        Duration duration = Duration.between(
-                session.getStartedAt(),
-                LocalDateTime.now()
-        );
-
-        session.setCorrectCount(correctCount);
-        session.setTotalQuestions(questions.size());
-        session.setScorePercentage(roundedRate);
-        session.setDurationInSeconds(duration.getSeconds());
-        session.setCompletedAt(LocalDateTime.now());
-        session.setStatus(SessionStatus.COMPLETED);
-
-        quizSessionRepository.save(session);
-
-        return new ResultResponseDto(
-                correctCount,
-                questions.size(),
-                roundedRate
-        );
+        return correctCount;
     }
 
+    private void finalizeSession(
+            QuizSession session,
+            int correctCount,
+            long score,
+            long duration
+    ) {
+
+        session.setCorrectCount(correctCount);
+        session.setTotalQuestions(session.getQuiz().getQuestions().size());
+        session.setScorePercentage(score);
+        session.setDurationInSeconds(duration);
+        session.setCompletedAt(LocalDateTime.now());
+        session.setStatus(SessionStatus.COMPLETED);
+    }
+
+    private void validateSessionState(QuizSession session) {
+
+        if (session.getStatus() == SessionStatus.COMPLETED) {
+            throw new BusinessException("Session already submitted");
+        }
+    }
+
+    private void validateAnswerCount(
+            QuizSession session,
+            SubmitSessionRequestDto request
+    ) {
+
+        int expected = session.getQuiz().getQuestions().size();
+        int received = request.answers().size();
+
+        if (expected != received) {
+            throw new BusinessException("Answer count mismatch");
+        }
+    }
+
+    private long calculateScore(int correct, int total) {
+
+        if (total == 0) return 0;
+
+        double rate = (correct * 100.0) / total;
+        return Math.round(rate);
+    }
+
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+    }
+
+    private SessionResponseDto mapToSessionDto(QuizSession session) {
+
+        return new SessionResponseDto(
+                session.getId()
+        );
+    }
 }

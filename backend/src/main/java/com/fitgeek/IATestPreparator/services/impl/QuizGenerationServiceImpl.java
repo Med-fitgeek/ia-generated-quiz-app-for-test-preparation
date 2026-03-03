@@ -106,17 +106,17 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
         User owner = getUser(userDetails);
 
-        Quiz quiz = quizRepository
-                .findByIdAndOwnerId(quizId, owner.getId())
-                .orElseThrow(() -> new BusinessException("Quiz not found or access denied"));
+        int deleted = quizRepository.deleteByIdAndUserId(quizId, owner.getId());
 
-        quizRepository.delete(quiz);
+        if (deleted == 0) {
+            throw new BusinessException("Quiz not found or access denied");
+        }
 }
 
 
     //------------------------------------------------------
-    // Util Methods
-    //-------------------------------------------------------
+    // Internal Logic
+    //------------------------------------------------------
 
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername())

@@ -34,7 +34,7 @@ public class QuizSession {
     @Column(nullable = false, length = 20)
     private SessionStatus status; // IN_PROGRESS / COMPLETED
 
-    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizAnswer> answers;
 
     private Integer correctCount;

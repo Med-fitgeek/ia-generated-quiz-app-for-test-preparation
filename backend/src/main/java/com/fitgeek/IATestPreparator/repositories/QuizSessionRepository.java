@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,10 @@ public interface QuizSessionRepository extends JpaRepository<QuizSession, Long> 
     AND s.status IN ('CREATED','STARTED')
 """)
     Optional<QuizSession> findActiveSession(Long userId, Long quizId);
+
+    Optional<QuizSession> findByIdAndUserId(Long id, Long userId);
+
+    List<QuizSession> findAllByUserId(Long id);
+
+    int deleteByIdAndUserId(Long sessionId, Long userId);
 }

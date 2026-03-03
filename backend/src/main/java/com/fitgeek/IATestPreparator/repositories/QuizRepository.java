@@ -10,4 +10,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     List<Quiz> findAllByOwnerId(Long ownerId);
     Optional<Quiz> findByIdAndOwnerId(Long id, Long ownerId);
+    int deleteByIdAndUserId(Long id, Long quizId);
+
 }
