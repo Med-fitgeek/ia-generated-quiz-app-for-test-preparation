@@ -23,4 +23,16 @@ export class SessionService {
     return this.http.post<ResultResponseDto>(`${this.serviceUrl}/${sessionId}/submit`, request);
   }
 
+  getSessionById(sessionId: number): Observable<SessionResponseDto> {
+    return this.http.get<SessionResponseDto>(`${this.serviceUrl}/${sessionId}`);
+  }
+
+  getAllSessions(): Observable<SessionResponseDto[]> {
+    return this.http.get<SessionResponseDto[]>(`${this.serviceUrl}`);
+  }
+
+  deleteSession(sessionId: number): Observable<void> {
+    return this.http.delete<void>(`${this.serviceUrl}/${sessionId}`);
+  }
+
 }
