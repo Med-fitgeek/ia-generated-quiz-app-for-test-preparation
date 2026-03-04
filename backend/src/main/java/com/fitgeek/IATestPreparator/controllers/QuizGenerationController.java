@@ -2,6 +2,7 @@ package com.fitgeek.IATestPreparator.controllers;
 
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
 import com.fitgeek.IATestPreparator.dtos.QuizGenerationRequestDto;
+import com.fitgeek.IATestPreparator.dtos.QuizResponseDto;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,10 +40,10 @@ public class QuizGenerationController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<GeneratedQuizDto>> getAllQuizzes(
+    public ResponseEntity<List<QuizResponseDto>> getAllQuizzes(
             @AuthenticationPrincipal UserDetails userDetails
     ){
-        List<GeneratedQuizDto> quizzes =
+        List<QuizResponseDto> quizzes =
                 quizGenerationService.getAllQuizzesByOwner(userDetails);
 
         return ResponseEntity.ok(quizzes);

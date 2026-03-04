@@ -5,6 +5,7 @@ import com.fitgeek.IATestPreparator.Utils.GeneratedQuizValidator;
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuestionDto;
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
 import com.fitgeek.IATestPreparator.dtos.QuizGenerationRequestDto;
+import com.fitgeek.IATestPreparator.dtos.QuizResponseDto;
 import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
 import com.fitgeek.IATestPreparator.entities.Question;
 import com.fitgeek.IATestPreparator.entities.Quiz;
@@ -89,14 +90,19 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GeneratedQuizDto> getAllQuizzesByOwner(UserDetails userDetails) {
+    public List<QuizResponseDto> getAllQuizzesByOwner(UserDetails userDetails) {
 
         User owner = getUser(userDetails);
 
         List<Quiz> quizzes = quizRepository.findAllByOwnerId(owner.getId());
 
         return quizzes.stream()
-                .map(this::mapToDto)
+                .map(quiz -> new QuizResponseDto(
+                        quiz.getId(),
+                        quiz.getOwner().getId(),
+                        quiz.getGeneratedAt(),
+                        quiz.getNumberOfSessions()
+                ))
                 .toList();
     }
 
@@ -106,7 +112,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
         User owner = getUser(userDetails);
 
-        int deleted = quizRepository.deleteByIdAndUserId(quizId, owner.getId());
+        int deleted = quizRepository.deleteByIdAndOwnerId(quizId, owner.getId());
 
         if (deleted == 0) {
             throw new BusinessException("Quiz not found or access denied");
