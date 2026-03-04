@@ -19,6 +19,7 @@ export class QuizGenerateComponent implements OnInit {
   sourceId!: number;
 
   // Form state
+  title = '';
   numberOfQuestions = 5;
   difficulty: Difficulty = 'MODERATE';
 
@@ -59,6 +60,7 @@ export class QuizGenerateComponent implements OnInit {
 
     const payload: QuizGenerationRequest = {
       sourceId: this.sourceId,
+      title: this.title,
       numberOfQuestions: this.numberOfQuestions,
       difficulty: this.difficulty,
     };

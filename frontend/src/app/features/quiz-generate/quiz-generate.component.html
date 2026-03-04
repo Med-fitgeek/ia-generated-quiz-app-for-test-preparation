@@ -9,6 +9,14 @@
 
     <div class="flex-col gap-4">
       <div class="flex-col gap-2">
+        <label>Title</label>
+        <input
+          type="text"
+          [(ngModel)]="title"
+          placeholder="Enter a title for the quiz"
+        />
+      </div>
+      <div class="flex-col gap-2">
         <label>Number of questions</label>
         <input
           type="number"
