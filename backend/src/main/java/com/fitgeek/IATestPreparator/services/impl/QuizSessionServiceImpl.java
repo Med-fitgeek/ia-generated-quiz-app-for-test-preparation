@@ -56,6 +56,8 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         QuizSession saved = quizSessionRepository.save(session);
 
+        quiz.setNumberOfSessions(quiz.getNumberOfSessions() + 1);
+
         return new SessionResponseDto(saved.getId());
     }
 

@@ -1,10 +1,9 @@
 package com.fitgeek.IATestPreparator.services;
 
 import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
-import com.fitgeek.IATestPreparator.dtos.SessionRequestDto;
 import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
 import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
