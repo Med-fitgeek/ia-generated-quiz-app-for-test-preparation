@@ -26,7 +26,7 @@
     <div class="quiz-tile-header">
       <h3>{{ quiz.title }}</h3>
       <span class="quiz-date">
-        {{ quiz.lastPlayedAt }}
+        {{ quiz.generatedAt }}
       </span>
     </div>
 
@@ -41,8 +41,8 @@
       </button>
 
       <button class="btn btn-primary"
-              (click)="openQuiz(quiz.quizId)">
-        Voir
+              (click)="deleteQuiz(quiz.quizId)">
+        Sup
       </button>
     </div>
 
