@@ -42,7 +42,12 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         return quizSessionRepository
                 .findActiveSession(user.getId(), quiz.getId())
-                .map(session -> new SessionResponseDto(session.getId()))
+                .map(session -> new SessionResponseDto(
+                        session.getId(),
+                        session.getStatus(),
+                        session.getTotalQuestions(),
+                        session.getScorePercentage()
+                ))
                 .orElseGet(() -> createNewSession(user, quiz));
     }
 
@@ -58,7 +63,13 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         quiz.setNumberOfSessions(quiz.getNumberOfSessions() + 1);
 
-        return new SessionResponseDto(saved.getId());
+        return new SessionResponseDto(
+                saved.getId(),
+                saved.getStatus(),
+                saved.getTotalQuestions(),
+                saved.getScorePercentage()
+
+        );
     }
 
     //------------------------------------------------------
@@ -223,7 +234,11 @@ public class QuizSessionServiceImpl implements QuizSessionService {
     private SessionResponseDto mapToSessionDto(QuizSession session) {
 
         return new SessionResponseDto(
-                session.getId()
+                session.getId(),
+                session.getStatus(),
+                session.getTotalQuestions(),
+                session.getScorePercentage()
+
         );
     }
 }

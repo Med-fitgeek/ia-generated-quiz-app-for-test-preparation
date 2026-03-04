@@ -37,8 +37,8 @@ public class QuizSession {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizAnswer> answers;
 
-    private Integer correctCount;
-    private Integer totalQuestions;
+    private int correctCount;
+    private int totalQuestions;
     private Long scorePercentage;
 
     @Column(nullable = false)
