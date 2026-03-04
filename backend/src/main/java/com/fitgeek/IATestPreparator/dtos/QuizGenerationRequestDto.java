@@ -7,6 +7,8 @@ public record QuizGenerationRequestDto(
         @NotNull
         Long sourceId,
         @NotNull
+        String title,
+        @NotNull
         int numberOfQuestions,
         @NotBlank
         String difficulty

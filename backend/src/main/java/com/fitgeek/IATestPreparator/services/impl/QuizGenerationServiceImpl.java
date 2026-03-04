@@ -64,7 +64,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
                     requestDto.numberOfQuestions()
             );
 
-            Quiz quiz = buildQuiz(owner, source, generatedQuiz);
+            Quiz quiz = buildQuiz(requestDto.title(), owner, source, generatedQuiz);
 
             Quiz savedQuiz = quizRepository.save(quiz);
 
@@ -100,6 +100,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
                 .map(quiz -> new QuizResponseDto(
                         quiz.getId(),
                         quiz.getOwner().getId(),
+                        quiz.getTitle(),
                         quiz.getGeneratedAt(),
                         quiz.getNumberOfSessions()
                 ))
@@ -130,12 +131,14 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
     }
 
 
-    private Quiz buildQuiz(User owner,
+    private Quiz buildQuiz(String title, User owner,
                            KnowledgeSource source,
                            GeneratedQuizDto generatedQuiz) {
 
         Quiz quiz = Quiz.builder()
+                .title(title)
                 .owner(owner)
+                .numberOfSessions(0L)
                 .sourceChecksum(source.getChecksum())
                 .generatorVersion(promptStrategy.getClass().getSimpleName())
                 .build();

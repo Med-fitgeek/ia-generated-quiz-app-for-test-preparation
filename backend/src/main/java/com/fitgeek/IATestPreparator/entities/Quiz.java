@@ -22,13 +22,17 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    private String title;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
     private String sourceChecksum;
     private String generatorVersion;
     private LocalDateTime generatedAt;
     private Long numberOfSessions;
+
     @Builder.Default
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();

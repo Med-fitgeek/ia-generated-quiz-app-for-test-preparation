@@ -39,7 +39,7 @@ public class QuizGenerationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public ResponseEntity<List<QuizResponseDto>> getAllQuizzes(
             @AuthenticationPrincipal UserDetails userDetails
     ){
