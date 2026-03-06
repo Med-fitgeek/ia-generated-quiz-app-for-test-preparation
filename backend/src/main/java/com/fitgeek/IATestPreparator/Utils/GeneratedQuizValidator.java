@@ -1,34 +1,34 @@
 package com.fitgeek.IATestPreparator.Utils;
 
+import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
 import com.fitgeek.IATestPreparator.excpetion.BusinessException;
-import com.fitgeek.IATestPreparator.pojos.GeneratedQuestion;
-import com.fitgeek.IATestPreparator.pojos.GeneratedQuiz;
+import com.fitgeek.IATestPreparator.dtos.GeneratedQuestionDto;
 
 public class GeneratedQuizValidator {
 
-    public static void validate(GeneratedQuiz quiz, int expectedCount) {
+    public static void validate(GeneratedQuizDto quizDto, int expectedCount) {
 
-        if (quiz == null || quiz.getQuestions() == null || quiz.getQuestions().isEmpty())
+        if (quizDto == null || quizDto.generatedQuestions() == null || quizDto.generatedQuestions().isEmpty())
             throw new BusinessException("Generated quiz is empty");
 
-        if (quiz.getQuestions().size() != expectedCount)
-            throw new BusinessException("Expected " + expectedCount + " questions but got " + quiz.getQuestions().size());
+        if (quizDto.generatedQuestions().size() != expectedCount)
+            throw new BusinessException("Expected " + expectedCount + " questions but got " + quizDto.generatedQuestions().size());
 
-        for (GeneratedQuestion question : quiz.getQuestions()) {
+        for (GeneratedQuestionDto question : quizDto.generatedQuestions()) {
 
-            if (question.getStatement() == null || question.getStatement().isBlank())
+            if (question.statement() == null || question.statement().isBlank())
                 throw new BusinessException("Question statement is empty");
 
-            if (question.getChoices() ==  null || question.getChoices().size() < 2)
+            if (question.choices() ==  null || question.choices().size() < 2)
                 throw new BusinessException("Question must have at least 2 choices");
 
-            if (question.getCorrectIndex() < 0 || question.getCorrectIndex() > question.getChoices().size() -1)
+            if (question.correctIndex() < 0 || question.correctIndex() > question.choices().size() -1)
                 throw new BusinessException("Correct index out of bounds");
 
-            if (question.getExplanation() == null || question.getExplanation().isBlank())
+            if (question.explanation() == null || question.explanation().isBlank())
                 throw new BusinessException("Explanation is missing");
 
-            if (question.getSourceQuote() == null || question.getSourceQuote().isBlank())
+            if (question.sourceQuote() == null || question.sourceQuote().isBlank())
                 throw new BusinessException("Source quote is missing");
         }
     }

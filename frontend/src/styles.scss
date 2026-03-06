@@ -10,15 +10,13 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  width: 100%;
+  min-height: 100%;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
   background-color: var(--color-bg);
   color: var(--color-text);
 }
 .app-root {
   min-height: 100vh;
-  min-width: 100vw;
   display: flex;
   flex-direction: column;
 }
@@ -82,9 +80,8 @@ html, body {
 ========================= */
 .container {
   max-width: 100%;
-  padding: auto;
   margin: 0 auto;
-  padding: var(--space-5);
+  padding: var(--space-3);
 }
 
 .flex {
@@ -139,14 +136,15 @@ p {
   margin: 0 0 var(--space-3) 0;
   color: var(--color-text-muted);
   line-height: 1.5;
+  font-size: 1.3rem;
 }
 
 /* =========================
    CARDS
 ========================= */
 .card-section {
-  padding-left: 20em;
-  padding-right: 20em;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 .card {
   background: var(--color-card);
@@ -157,10 +155,13 @@ p {
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
 }
-
 .card:hover {
   border-color: rgba(78, 205, 196, 0.3);
   box-shadow: var(--shadow-md);
+}
+
+.source-card {
+    max-width: 50%;
 }
 
 /* =========================
@@ -264,112 +265,6 @@ textarea {
 }
 
 /* =========================
-   NAVBAR
-========================= */
-.navbar {
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--space-4) 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.brand {
-  font-weight: 700;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 1.3rem;
-}
-
-.nav-link {
-  color: var(--color-text-muted);
-  font-size: 1.5em;
-  font-weight: bold;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  position: relative;
-}
-
-.nav-link:hover {
-  color: var(--color-secondary);
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
-  transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-
-/* =========================
-   HERO
-========================= */
-.hero {
-  padding: 80px 0;
-  background: linear-gradient(180deg, #fefefe 0%, #f8fcfd 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(255, 107, 107, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  bottom: -50%;
-  left: -20%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(78, 205, 196, 0.08) 0%, transparent 70%);
-  border-radius: 50%;
-}
-
-.hero h1 {
-  max-width: 700px;
-  position: relative;
-  z-index: 1;
-}
-
-.hero p {
-  max-width: 700px;
-  font-size: 1.05rem;
-  position: relative;
-  z-index: 1;
-}
-
-/* =========================
-   FOOTER
-========================= */
-.footer {
-  border-top: 1px solid var(--color-border);
-  padding: var(--space-4) 0;
-  color: var(--color-text-muted);
-  background: #fafbfc;
-}
-
-.muted {
-  color: var(--color-text-muted);
-}
-
-/* =========================
    ALERTS
 ========================= */
 .alert {
@@ -446,5 +341,11 @@ textarea {
   
   .hero {
     padding: 60px 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .card-section .flex {
+    flex-direction: column;
   }
 }

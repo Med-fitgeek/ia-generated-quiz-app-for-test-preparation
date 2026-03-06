@@ -2,14 +2,14 @@ package com.fitgeek.IATestPreparator.Utils;
 
 import com.fitgeek.IATestPreparator.dtos.StrucuturedTextdto;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class KnowledgeNormalizer {
 
     private final ChatClient chatClient;
 
-    // Le ChatClient est l'interface moderne de Spring AI
     public KnowledgeNormalizer(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
     }

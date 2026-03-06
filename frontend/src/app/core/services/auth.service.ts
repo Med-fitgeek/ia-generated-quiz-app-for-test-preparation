@@ -1,45 +1,83 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
-  
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+
+  private apiUrl = environment.apiUrl;
+  private accessToken: string | null = null;
+
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  private authInitializedSubject = new BehaviorSubject<boolean>(false);
+  public authInitialized$ = this.authInitializedSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.API_URL}/login`, credentials);
+  login(credentials: any): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/auth/login`,
+      credentials,
+      { withCredentials: true }
+    ).pipe(
+      tap((res: any) => {
+        this.accessToken = res.accessToken;
+        this.isAuthenticatedSubject.next(true);
+      })
+    );
   }
 
-  register(data: { username: string; email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.API_URL}/register`, data);
+  register(data: any): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/auth/register`,
+      data,
+      { withCredentials: true }
+    ).pipe(
+      tap((res: any) => {
+        this.accessToken = res.accessToken;
+        this.isAuthenticatedSubject.next(true);
+      })
+    );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    this.http.post(`${this.apiUrl}/auth/logout`, {}, { withCredentials: true })
+      .subscribe();
+
+    this.accessToken = null;
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem('token', token);
-    this.isAuthenticatedSubject.next(true);
+  refreshAccessToken(): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/auth/refresh`,
+      {},
+      { withCredentials: true }
+    ).pipe(
+      tap((res: any) => {
+        this.accessToken = res.accessToken;
+        this.isAuthenticatedSubject.next(true);
+        this.authInitializedSubject.next(true);
+      }),
+      catchError(err => {
+        this.accessToken = null;
+        this.isAuthenticatedSubject.next(false);
+        this.router.navigate(['/login']);
+        return throwError(() => err);
+      })
+    );
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
+  getAccessToken(): string | null {
+    return this.accessToken;
   }
 
   isLoggedIn(): boolean {
-    return this.hasToken();
-  }
-
-  private hasToken(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.accessToken;
   }
 }

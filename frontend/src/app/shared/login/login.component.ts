@@ -41,13 +41,12 @@ export class LoginComponent {
 
     this.authService.login(credentials).subscribe({
       next: (res) => {
-        this.authService.saveToken(res.token);
         this.successMessage = 'Connexion réussie.'; 
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.errorMessage = ('Email ou mot de passe invalide');
-        console.error('Erreur de connexion', err);
+        console.error(err);
         this.loading = false;
       }
     });

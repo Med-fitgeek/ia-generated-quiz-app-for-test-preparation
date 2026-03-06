@@ -1,0 +1,36 @@
+.section-process {
+  padding: 140px 0;
+  background: #ffffff;
+}
+
+.timeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 60px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+}
+
+.step {
+  text-align: center;
+  width: 30%;
+  position: relative;
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  box-shadow: 0 0 20px rgba(78,205,196,0.4);
+}

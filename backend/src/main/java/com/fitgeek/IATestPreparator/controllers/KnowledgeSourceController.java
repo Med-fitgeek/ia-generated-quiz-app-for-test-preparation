@@ -5,7 +5,6 @@ import com.fitgeek.IATestPreparator.dtos.KnowledgeRequestDto;
 import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import com.fitgeek.IATestPreparator.services.KnowledgeSourceService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,7 +19,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping("/api/knowledge")
+@RequestMapping("/api/sources")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('USER')")
 public class KnowledgeSourceController {
@@ -30,7 +29,7 @@ public class KnowledgeSourceController {
     @PostMapping(value ="/upload", consumes = "multipart/form-data")
     public ResponseEntity<KnowledgeNormalizedResponseDto> uploadSource(
             @ModelAttribute KnowledgeRequestDto requestDto,
-            @AuthenticationPrincipal UserDetails userDetails) throws IOException, NoSuchAlgorithmException {
+            @AuthenticationPrincipal UserDetails userDetails) throws Exception {
 
         boolean hasDocument = requestDto.file() != null && !requestDto.file().isEmpty();
         boolean hasText = requestDto.strucuturedTextDto() != null;

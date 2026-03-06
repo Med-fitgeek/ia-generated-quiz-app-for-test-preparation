@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { KnowledgeUploadComponent } from './features/knowledge-upload/knowledge-upload.component';
 import { NavBarComponent } from "./shared/nav-bar/nav-bar.component";
 import { FooterComponent } from "./shared/footer/footer.component";
-import { HomeComponent } from "./shared/home/home.component";
-import { RegisterComponent } from "./shared/register/register.component";
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -15,4 +13,13 @@ import { RegisterComponent } from "./shared/register/register.component";
 })
 export class AppComponent {
   title = 'frontend';
+
+  constructor(private authService: AuthService){}
+
+  ngOnInit() {
+  this.authService.refreshAccessToken().subscribe({
+    next: () => {},
+    error: () => {}
+  });
+}
 }

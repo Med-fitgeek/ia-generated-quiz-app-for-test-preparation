@@ -17,7 +17,7 @@ public class AnswerExplanation {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", nullable = false)
-    private UserAnswer userAnswer;
+    private QuizAnswer userAnswer;
 
     @Column(nullable = false, length = 1500)
     private String explanation;

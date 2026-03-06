@@ -1,16 +1,29 @@
 package com.fitgeek.IATestPreparator.services;
 
-import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
-import com.fitgeek.IATestPreparator.entities.QuizSession;
-import com.fitgeek.IATestPreparator.entities.User;
+import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
+import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
+import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.List;
 
 public interface QuizSessionService {
 
-    QuizSession createSession(User user, KnowledgeSource source, int numberOfQuestions, String difficulty);
+    SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId);
 
-    void markGenerating(QuizSession session);
+    ResultResponseDto submitSession(
+            UserDetails userDetails,
+            Long sessionId,
+            SubmitSessionRequestDto request
+    );
 
-    void markGenerated(QuizSession session);
+    @Transactional(readOnly = true)
+    SessionResponseDto getSessionById(Long sessionId, UserDetails userDetails);
 
-    void markFailed(QuizSession session);
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    List<SessionResponseDto> getAllSessionsByOwner(UserDetails userDetails);
+
+    @org.springframework.transaction.annotation.Transactional
+    void deleteSession(Long sessionId, UserDetails userDetails);
 }

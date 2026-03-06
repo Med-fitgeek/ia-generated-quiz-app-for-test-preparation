@@ -1,8 +1,5 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
-import com.fitgeek.IATestPreparator.Utils.ChecksumService;
-import com.fitgeek.IATestPreparator.Utils.KnowledgeNormalizer;
-import com.fitgeek.IATestPreparator.Utils.DocumentExtractor;
 import com.fitgeek.IATestPreparator.dtos.KnowledgeNormalizedResponseDto;
 import com.fitgeek.IATestPreparator.dtos.StrucuturedTextdto;
 import com.fitgeek.IATestPreparator.entities.KnowledgeSource;
@@ -11,8 +8,10 @@ import com.fitgeek.IATestPreparator.entities.enums.SourceType;
 import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
+import com.fitgeek.IATestPreparator.services.DocumentProcessingService;
 import com.fitgeek.IATestPreparator.services.KnowledgeSourceService;
-import jakarta.transaction.Transactional;
+import com.fitgeek.IATestPreparator.services.StorageService;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,106 +20,123 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
 
     private final KnowledgeSourceRepository knowledgeSourceRepository;
     private final UserRepository userRepository;
-    private final KnowledgeNormalizer knowledgeNormalizer;
-    private final ChecksumService checksumService;
-    private final DocumentExtractor documentExtractor;
-    private final StorageServiceImpl storageServiceImpl;
+    private final DocumentProcessingService documentProcessingService;
+    private final StorageService storageService;
 
     @Override
-    public KnowledgeNormalizedResponseDto createFromText(StrucuturedTextdto textDto, UserDetails userDetails) throws IOException {
+    @Transactional
+    public KnowledgeNormalizedResponseDto createFromText(
+            StrucuturedTextdto textDto,
+            UserDetails userDetails
+    ) throws IOException {
 
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+        User owner = getUser(userDetails);
 
-        String filename = textDto.subject();
+        String checksum = documentProcessingService.calculateChecksumForText(textDto);
 
-        //Checking if the file already exist even if the name changes
-        String checksum = checksumService.calculateChecksumForDto(textDto);
-        Optional<KnowledgeSource> existingDocument = knowledgeSourceRepository.findByOwnerIdAndChecksum(owner.getId(), checksum);
-        if (existingDocument.isPresent()) {
-            return new KnowledgeNormalizedResponseDto(existingDocument.get().getId());
-        }
-
-        //Normalized dto contents to markdown text
-        String normalizedText = knowledgeNormalizer.dtoToMarkdown(textDto);
-
-        //Store file and return location path
-        Path path = storageServiceImpl.saveText(owner.getId(), filename, normalizedText);
-
-        KnowledgeSource knowledgeSource = KnowledgeSource.builder()
-                .owner(owner)
-                .sourceType(SourceType.DOCUMENT)
-                .normalizedContent(normalizedText)
-                .originalFilename(filename)
-                .storagePath(String.valueOf(path))
-                .checksum(checksum)
-                .build();
-        KnowledgeSource saved = knowledgeSourceRepository.save(knowledgeSource);
-
-        return new KnowledgeNormalizedResponseDto(
-                saved.getId()
+        return findExistingOrCreate(
+                owner,
+                checksum,
+                textDto.subject(),
+                SourceType.TEXT,
+                () -> {
+                    String normalized = documentProcessingService.normalizeText(textDto);
+                    Path path = storageService.saveText(owner.getId(), textDto.subject(), normalized);
+                    return new CreationPayload(normalized, path);
+                }
         );
-
     }
 
     @Override
-    public KnowledgeNormalizedResponseDto createFromDocument(MultipartFile file, UserDetails userDetails) throws IOException, NoSuchAlgorithmException {
-
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+    @Transactional
+    public KnowledgeNormalizedResponseDto createFromDocument(
+            MultipartFile file,
+            UserDetails userDetails
+    ) throws IOException, NoSuchAlgorithmException {
 
         if (file.isEmpty()) {
             throw new BusinessException("File is empty");
         }
 
-        String filename = file.getOriginalFilename();
+        validateExtension(file.getOriginalFilename());
+
+        User owner = getUser(userDetails);
+
+        byte[] bytes = file.getBytes();
+
+        String checksum = documentProcessingService.calculateChecksumForFile(bytes);
+
+        return findExistingOrCreate(
+                owner,
+                checksum,
+                file.getOriginalFilename(),
+                SourceType.DOCUMENT,
+                () -> {
+                    String normalized = documentProcessingService.extractAndNormalize(bytes);
+                    Path path = storageService.saveFile(owner.getId(), file.getOriginalFilename(), file);
+                    return new CreationPayload(normalized, path);
+                }
+        );
+    }
+
+    private KnowledgeNormalizedResponseDto findExistingOrCreate(
+            User owner,
+            String checksum,
+            String filename,
+            SourceType type,
+            CreationStrategy strategy
+    )  {
+
+        return knowledgeSourceRepository
+                .findByOwnerIdAndChecksum(owner.getId(), checksum)
+                .map(existing -> new KnowledgeNormalizedResponseDto(existing.getId()))
+                .orElseGet(() -> {
+
+                    try {
+                        CreationPayload payload = strategy.create();
+
+                        KnowledgeSource entity = KnowledgeSource.builder()
+                                .owner(owner)
+                                .sourceType(type)
+                                .originalFilename(filename)
+                                .normalizedContent(payload.normalizedContent())
+                                .storagePath(payload.path().toString())
+                                .checksum(checksum)
+                                .build();
+
+                        KnowledgeSource saved = knowledgeSourceRepository.save(entity);
+
+                        return new KnowledgeNormalizedResponseDto(saved.getId());
+
+                    } catch (Exception e) {
+                        throw new BusinessException("Creation failed : " + e);
+                    }
+                });
+    }
+
+    private User getUser(UserDetails userDetails) {
+        return userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new BusinessException("User not found"));
+    }
+
+    private void validateExtension(String filename) {
         if (filename == null ||
-                !(filename.endsWith(".pdf") || filename.endsWith(".docx") || filename.endsWith(".csv"))) {
+                !(filename.toLowerCase().endsWith(".pdf")
+                        || filename.toLowerCase().endsWith(".docx")
+                        || filename.toLowerCase().endsWith(".csv"))) {
             throw new BusinessException("File type not supported");
         }
+    }
 
-
-        String checksum = checksumService.calculateChecksumForDocument(file.getInputStream());
-
-        Optional<KnowledgeSource> existingDocument =
-                knowledgeSourceRepository.findByOwnerIdAndChecksum(owner.getId(), checksum);
-
-        if (existingDocument.isPresent()) {
-            return new KnowledgeNormalizedResponseDto(existingDocument.get().getId());
-        }
-
-        String extractedDocument;
-        try {
-            extractedDocument = documentExtractor.extractRawText(file.getInputStream());
-        } catch (Exception e) {
-            throw new BusinessException("Failed to extract text from document");
-        }
-
-        String normalizedContent = knowledgeNormalizer.rawTextToMarkdown(extractedDocument);
-
-        Path path = storageServiceImpl.saveFile(owner.getId(), filename, file);
-
-        KnowledgeSource knowledgeSource = KnowledgeSource.builder()
-                .owner(owner)
-                .sourceType(SourceType.DOCUMENT)
-                .normalizedContent(normalizedContent)
-                .originalFilename(filename)
-                .storagePath(String.valueOf(path))
-                .checksum(checksum)
-                .build();
-        KnowledgeSource saved = knowledgeSourceRepository.save(knowledgeSource);
-
-        return new KnowledgeNormalizedResponseDto(
-                saved.getId()
-        );
+    private record CreationPayload(String normalizedContent, Path path) {}
+    private interface CreationStrategy {
+        CreationPayload create() throws Exception;
     }
 }

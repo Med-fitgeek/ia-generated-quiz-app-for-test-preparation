@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotNull;
 
 public record QuizGenerationRequestDto(
         @NotNull
-        Long knowledgeId,
+        Long sourceId,
+        @NotNull
+        String title,
         @NotNull
         int numberOfQuestions,
         @NotBlank

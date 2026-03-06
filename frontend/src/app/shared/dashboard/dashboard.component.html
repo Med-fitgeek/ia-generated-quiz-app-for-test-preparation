@@ -1,0 +1,27 @@
+<div class="dashboard-layout">
+
+  <app-sidebar></app-sidebar>
+
+  <div class="dashboard-main">
+
+    <div class="dashboard-header">
+      <div>
+        <h2>Dashboard</h2>
+        <p class="muted">Bienvenue, Medoune</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="newQuiz()">
+          + Nouveau Quiz
+        </button>
+        
+        <div class="profile-badge">
+          M
+        </div>
+      </div>
+    </div>
+
+    <router-outlet></router-outlet>
+
+  </div>
+</div>

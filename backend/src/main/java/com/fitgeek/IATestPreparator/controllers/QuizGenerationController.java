@@ -1,0 +1,63 @@
+package com.fitgeek.IATestPreparator.controllers;
+
+import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
+import com.fitgeek.IATestPreparator.dtos.QuizGenerationRequestDto;
+import com.fitgeek.IATestPreparator.dtos.QuizResponseDto;
+import com.fitgeek.IATestPreparator.services.QuizGenerationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/quizzes")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('USER')")
+public class QuizGenerationController {
+    private final QuizGenerationService quizGenerationService;
+
+    @PostMapping("/generate")
+    public ResponseEntity<GeneratedQuizDto> generateQuiz(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody QuizGenerationRequestDto requestDto
+    ){
+        GeneratedQuizDto quizDto = quizGenerationService.generateQuiz(requestDto, userDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
+    }
+
+    @GetMapping("/{quizId}")
+    public ResponseEntity<GeneratedQuizDto> getQuizById(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long quizId
+    ){
+        GeneratedQuizDto quizDto = quizGenerationService.getQuizById(quizId, userDetails);
+        return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<QuizResponseDto>> getAllQuizzes(
+            @AuthenticationPrincipal UserDetails userDetails
+    ){
+        List<QuizResponseDto> quizzes =
+                quizGenerationService.getAllQuizzesByOwner(userDetails);
+
+        return ResponseEntity.ok(quizzes);
+    }
+
+    @DeleteMapping("/{quizId}")
+    public ResponseEntity<HttpStatus> deleteQuiz(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable Long quizId
+    ){
+        quizGenerationService.deleteQuiz(quizId, userDetails);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+}

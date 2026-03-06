@@ -3,16 +3,15 @@ package com.fitgeek.IATestPreparator.controllers;
 import com.fitgeek.IATestPreparator.dtos.LoginRequestDto;
 import com.fitgeek.IATestPreparator.dtos.LoginResponseDto;
 import com.fitgeek.IATestPreparator.dtos.RegisterRequestDto;
-import com.fitgeek.IATestPreparator.dtos.RegisterResponseDto;
 import com.fitgeek.IATestPreparator.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,14 +21,37 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
-        RegisterResponseDto responseDto = authService.register(registerRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    public ResponseEntity<LoginResponseDto> register(
+            @RequestBody @Valid RegisterRequestDto dto
+    ) {
+        return authService.register(dto);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
-        LoginResponseDto responseDto = authService.login(loginRequestDto);
-        return ResponseEntity.ok(responseDto);
+    public ResponseEntity<LoginResponseDto> login(
+            @RequestBody @Valid LoginRequestDto dto
+    ) {
+        return authService.login(dto);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponseDto> refresh(
+            @CookieValue("refreshToken") String refreshToken
+    ) {
+        return authService.refresh(refreshToken);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(false) // true en prod HTTPS
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
+                .build();
     }
 }
