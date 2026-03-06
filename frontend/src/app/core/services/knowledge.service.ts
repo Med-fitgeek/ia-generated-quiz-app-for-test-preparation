@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { KnowledgeNormalizedResponse } from '../models/knowledge-normalized-reponse.model';
 import { StructuredTextDto } from '../models/structured-text-dto.models';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class KnowledgeService {

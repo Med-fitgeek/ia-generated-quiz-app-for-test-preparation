@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { QuizGenerationRequest } from '../models/quiz-generation.model';
 import { GeneratedQuizDto } from '../models/generated-quiz-dto';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { QuizResponseDto } from '../models/quiz-response-dto.model';
 
 @Injectable({ providedIn: 'root' })

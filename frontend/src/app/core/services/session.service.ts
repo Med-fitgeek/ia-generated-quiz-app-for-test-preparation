@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { SessionResponseDto } from "../models/session-response-dto.model";
 import { Observable } from "rxjs";
 import { ResultResponseDto } from "../models/result-response-dto.model";
-import { environment } from "../../../environments/environment.development";
+import { environment } from "../../../environments/environment";
 import { SubmitAnswerRequestDto } from "../models/submit-answer-request-dto.models";
 
 @Injectable({ providedIn: 'root' })
