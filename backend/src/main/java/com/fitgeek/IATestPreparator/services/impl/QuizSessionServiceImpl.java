@@ -11,6 +11,8 @@ import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -26,9 +28,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizSessionServiceImpl implements QuizSessionService {
 
+    private static final Logger log =
+            LoggerFactory.getLogger(QuizSessionServiceImpl.class);
+
     private final QuizSessionRepository quizSessionRepository;
     private final QuizRepository quizRepository;
-    private final UserRepository userRepository;
     private final CurrentUserService currentUserService;
 
     //------------------------------------------------------
@@ -64,6 +68,12 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                 .build();
 
         QuizSession saved = quizSessionRepository.save(session);
+        log.info(
+                "Quiz session created: sessionId={} userId={} quizId={}",
+                saved.getId(),
+                user.getId(),
+                quiz.getId()
+        );
 
         quiz.setNumberOfSessions(quiz.getNumberOfSessions() + 1);
 
@@ -101,6 +111,13 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                 .getSeconds();
 
         finalizeSession(session, correctCount, roundedRate, duration);
+
+        log.info(
+                "Quiz session submitted: sessionId={} userId={} score={}%",
+                session.getId(),
+                owner.getId(),
+                roundedRate
+        );
 
         return new ResultResponseDto(
                 correctCount,

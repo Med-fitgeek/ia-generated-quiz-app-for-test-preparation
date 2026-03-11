@@ -14,7 +14,6 @@ import com.fitgeek.IATestPreparator.entities.enums.Difficulty;
 import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizRepository;
-import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -32,19 +33,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizGenerationServiceImpl implements QuizGenerationService {
 
+    private static final Logger log =
+            LoggerFactory.getLogger(QuizGenerationServiceImpl.class);
+
     private final ChatClient chatClient;
     private final PromptStrategy promptStrategy;
     private final QuizRepository quizRepository;
-    private final UserRepository userRepository;
     private final KnowledgeSourceRepository sourceRepository;
     private final CurrentUserService currentUserService;
-
 
     @Override
     @Transactional
     public GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto) {
 
         User owner = currentUserService.getCurrentUser();
+
+        log.info(
+                "User {} requested quiz generation: sourceId={}, numberOfQuestions={}, difficulty={}",
+                owner.getId(),
+                requestDto.sourceId(),
+                requestDto.numberOfQuestions(),
+                requestDto.difficulty()
+        );
 
         KnowledgeSource source = sourceRepository.findByIdAndOwnerId(requestDto.sourceId(), owner.getId())
                 .orElseThrow(() -> new BusinessException("KnowledgeSource not found or access denied", HttpStatus.NOT_FOUND));
@@ -55,7 +65,8 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
         );
 
         try {
-
+            log.info("Calling AI to generate quiz...");
+            long start = System.currentTimeMillis();
             GeneratedQuizDto generatedQuiz = chatClient.prompt()
                     .system(systemInstructions)
                     .user(source.getNormalizedContent())
@@ -67,13 +78,28 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
                     requestDto.numberOfQuestions()
             );
 
+            long duration = System.currentTimeMillis() - start;
+            log.info("AI generation completed in {} ms", duration);
+
             Quiz quiz = buildQuiz(requestDto.title(), owner, source, generatedQuiz);
 
             Quiz savedQuiz = quizRepository.save(quiz);
+            log.info(
+                    "Quiz saved successfully: quizId={}, userId={}, questionCount={}",
+                    savedQuiz.getId(),
+                    owner.getId(),
+                    savedQuiz.getQuestions().size()
+            );
 
             return mapToDto(savedQuiz);
 
         } catch (Exception e) {
+            log.error(
+                    "AI quiz generation failed for user={} source={}",
+                    owner.getId(),
+                    source.getId(),
+                    e
+            );
             throw new BusinessException("AI quiz generation failed", HttpStatus.INTERNAL_SERVER_ERROR  );
         }
     }

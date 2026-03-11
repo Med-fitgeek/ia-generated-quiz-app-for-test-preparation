@@ -11,6 +11,8 @@ import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.DocumentProcessingService;
 import com.fitgeek.IATestPreparator.services.KnowledgeSourceService;
 import com.fitgeek.IATestPreparator.services.StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 @RequiredArgsConstructor
 public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
 
+    private static final Logger log =
+            LoggerFactory.getLogger(KnowledgeSourceServiceImpl.class);
     private final KnowledgeSourceRepository knowledgeSourceRepository;
     private final DocumentProcessingService documentProcessingService;
     private final CurrentUserService currentUserService;
@@ -62,6 +66,12 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
         validateExtension(file.getOriginalFilename());
 
         User owner = currentUserService.getCurrentUser();
+
+        log.info(
+                "User {} uploading document: filename={}",
+                owner.getId(),
+                file.getOriginalFilename()
+        );
 
         byte[] bytes = file.getBytes();
 
@@ -106,6 +116,12 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
                                 .build();
 
                         KnowledgeSource saved = knowledgeSourceRepository.save(entity);
+                        log.info(
+                                "Knowledge source created id={} user={} checksum={}",
+                                saved.getId(),
+                                owner.getId(),
+                                checksum
+                        );
 
                         return new KnowledgeNormalizedResponseDto(saved.getId());
 
