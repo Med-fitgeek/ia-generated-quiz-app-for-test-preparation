@@ -10,21 +10,37 @@ import { SubmitAnswerRequestDto } from "../models/submit-answer-request-dto.mode
 export class SessionService {
 
   private readonly apiUrl = environment.apiUrl;
-  private readonly serviceUrl = `${this.apiUrl}/sessions`
+  private readonly serviceUrl = `${this.apiUrl}/sessions`;
 
   constructor(private http: HttpClient) {}
 
   createSession(quizId: number): Observable<SessionResponseDto> {
-    return this.http.post<SessionResponseDto>(`${this.serviceUrl}/create`, quizId);
+
+    const payload = {
+      quizId: quizId
+    };
+
+    return this.http.post<SessionResponseDto>(
+      `${this.serviceUrl}/create`,
+      payload
+    );
   }
 
-  submitSession( sessionId: number,
-  request: SubmitAnswerRequestDto): Observable<ResultResponseDto> {
-    return this.http.post<ResultResponseDto>(`${this.serviceUrl}/${sessionId}/submit`, request);
+  submitSession(
+    sessionId: number,
+    request: SubmitAnswerRequestDto
+  ): Observable<ResultResponseDto> {
+
+    return this.http.post<ResultResponseDto>(
+      `${this.serviceUrl}/${sessionId}/submit`,
+      request
+    );
   }
 
   getSessionById(sessionId: number): Observable<SessionResponseDto> {
-    return this.http.get<SessionResponseDto>(`${this.serviceUrl}/${sessionId}`);
+    return this.http.get<SessionResponseDto>(
+      `${this.serviceUrl}/${sessionId}`
+    );
   }
 
   getAllSessions(): Observable<SessionResponseDto[]> {
