@@ -1,9 +1,12 @@
-<div class="quiz-page" *ngIf="state !== null">
+<div *ngIf="loading" class="loader"></div>
 
+<div class="quiz-page" *ngIf="!loading">
+  
   <!-- ERROR -->
   <div *ngIf="error" class="alert alert-error">
     {{ error }}
   </div>
+  
 
   <!-- READY -->
   <div *ngIf="state === 'READY'" class="quiz-center">
