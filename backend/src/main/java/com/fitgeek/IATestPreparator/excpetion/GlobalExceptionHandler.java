@@ -3,6 +3,7 @@ package com.fitgeek.IATestPreparator.excpetion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,5 +31,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .internalServerError()
                 .body("Unexpected server error");
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
+
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .get(0)
+                .getDefaultMessage();
+
+        return ResponseEntity.badRequest().body(message);
     }
 }

@@ -126,7 +126,11 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
                         return new KnowledgeNormalizedResponseDto(saved.getId());
 
                     } catch (Exception e) {
-                        throw new BusinessException("Creation failed : ", HttpStatus.INTERNAL_SERVER_ERROR);
+                        log.error("Knowledge source creation failed", e);
+                        throw new BusinessException(
+                                "Knowledge source creation failed",
+                                HttpStatus.INTERNAL_SERVER_ERROR
+                        );
                     }
                 });
     }
