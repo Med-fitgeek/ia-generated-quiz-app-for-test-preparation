@@ -10,20 +10,16 @@ import java.util.List;
 
 public interface QuizSessionService {
 
-    SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId);
+    SessionResponseDto getOrCreateSession(Long quizId);
 
-    ResultResponseDto submitSession(
-            UserDetails userDetails,
-            Long sessionId,
-            SubmitSessionRequestDto request
-    );
+    ResultResponseDto submitSession(Long sessionId, SubmitSessionRequestDto request);
 
     @Transactional(readOnly = true)
-    SessionResponseDto getSessionById(Long sessionId, UserDetails userDetails);
+    SessionResponseDto getSessionById(Long sessionId);
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    List<SessionResponseDto> getAllSessionsByOwner(UserDetails userDetails);
+    @Transactional(readOnly = true)
+    List<SessionResponseDto> getAllSessionsByOwner();
 
-    @org.springframework.transaction.annotation.Transactional
-    void deleteSession(Long sessionId, UserDetails userDetails);
+    @Transactional
+    void deleteSession(Long sessionId);
 }

@@ -9,14 +9,13 @@ import java.util.List;
 
 public interface QuizGenerationService {
 
-    GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto,
-                                  UserDetails userDetails);
+    GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto);
 
-    GeneratedQuizDto getQuizById(Long quizId, UserDetails userDetails);
+    GeneratedQuizDto getQuizById(Long quizId);
 
     @Transactional(readOnly = true)
-    List<QuizResponseDto> getAllQuizzesByOwner(UserDetails userDetails);
+    List<QuizResponseDto> getAllQuizzesByOwner();
 
     @Transactional
-    void deleteQuiz(Long quizId, UserDetails userDetails);
+    void deleteQuiz(Long quizId);
 }

@@ -9,11 +9,11 @@ import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
+import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -27,29 +27,30 @@ public class QuizSessionServiceImpl implements QuizSessionService {
     private final QuizSessionRepository quizSessionRepository;
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
+    private final CurrentUserService currentUserService;
 
     //------------------------------------------------------
     // Create or Resume Session
     //------------------------------------------------------
     @Override
     @Transactional
-    public SessionResponseDto getOrCreateSession(UserDetails userDetails, Long quizId) {
+    public SessionResponseDto getOrCreateSession(Long quizId) {
 
-        User user = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         Quiz quiz = quizRepository
-                .findByIdAndOwnerId(quizId, user.getId())
+                .findByIdAndOwnerId(quizId, owner.getId())
                 .orElseThrow(() -> new BusinessException("Quiz not found or access denied", HttpStatus.NOT_FOUND));
 
         return quizSessionRepository
-                .findActiveSession(user.getId(), quiz.getId())
+                .findActiveSession(owner.getId(), quiz.getId())
                 .map(session -> new SessionResponseDto(
                         session.getId(),
                         session.getStatus(),
                         session.getTotalQuestions(),
                         session.getScorePercentage()
                 ))
-                .orElseGet(() -> createNewSession(user, quiz));
+                .orElseGet(() -> createNewSession(owner, quiz));
     }
 
     private SessionResponseDto createNewSession(User user, Quiz quiz) {
@@ -79,16 +80,12 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
     @Override
     @Transactional
-    public ResultResponseDto submitSession(
-            UserDetails userDetails,
-            Long sessionId,
-            SubmitSessionRequestDto request
-    ) {
+    public ResultResponseDto submitSession(Long sessionId, SubmitSessionRequestDto request) {
 
-        User user = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         QuizSession session = quizSessionRepository
-                .findByIdAndUserId(sessionId, user.getId())
+                .findByIdAndUserId(sessionId, owner.getId())
                 .orElseThrow(() -> new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND));
 
         validateSessionState(session);
@@ -112,12 +109,12 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
     @Override
     @Transactional(readOnly = true)
-    public SessionResponseDto getSessionById(Long sessionId, UserDetails userDetails) {
+    public SessionResponseDto getSessionById(Long sessionId) {
 
-        User user = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         QuizSession session = quizSessionRepository
-                .findByIdAndUserId(sessionId, user.getId())
+                .findByIdAndUserId(sessionId, owner.getId())
                 .orElseThrow(() -> new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND));
 
         return mapToSessionDto(session);
@@ -125,12 +122,12 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SessionResponseDto> getAllSessionsByOwner(UserDetails userDetails) {
+    public List<SessionResponseDto> getAllSessionsByOwner() {
 
-        User user = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         List<QuizSession> sessions =
-                quizSessionRepository.findAllByUserId(user.getId());
+                quizSessionRepository.findAllByUserId(owner.getId());
 
         return sessions.stream()
                 .map(this::mapToSessionDto)
@@ -139,12 +136,12 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
     @Override
     @Transactional
-    public void deleteSession(Long sessionId, UserDetails userDetails) {
+    public void deleteSession(Long sessionId) {
 
-        User user = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         int deleted = quizSessionRepository
-                .deleteByIdAndUserId(sessionId, user.getId());
+                .deleteByIdAndUserId(sessionId, owner.getId());
 
         if (deleted == 0) {
             throw new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND);
@@ -225,11 +222,6 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         double rate = (correct * 100.0) / total;
         return Math.round(rate);
-    }
-
-    private User getUser(UserDetails userDetails) {
-        return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
     }
 
     private SessionResponseDto mapToSessionDto(QuizSession session) {

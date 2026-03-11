@@ -10,6 +10,6 @@ import java.security.NoSuchAlgorithmException;
 
 public interface KnowledgeSourceService {
 
-    KnowledgeNormalizedResponseDto createFromText(StrucuturedTextdto textDto, UserDetails userDetails) throws IOException;
-    KnowledgeNormalizedResponseDto createFromDocument(MultipartFile file, UserDetails userDetails) throws Exception;
+    KnowledgeNormalizedResponseDto createFromText(StrucuturedTextdto textDto) throws IOException;
+    KnowledgeNormalizedResponseDto createFromDocument(MultipartFile file) throws Exception;
 }

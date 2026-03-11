@@ -8,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,42 +20,30 @@ public class QuizGenerationController {
     private final QuizGenerationService quizGenerationService;
 
     @PostMapping("/generate")
-    public ResponseEntity<GeneratedQuizDto> generateQuiz(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody QuizGenerationRequestDto requestDto
-    ){
-        GeneratedQuizDto quizDto = quizGenerationService.generateQuiz(requestDto, userDetails);
+    public ResponseEntity<GeneratedQuizDto> generateQuiz(@RequestBody QuizGenerationRequestDto requestDto) {
+
+        GeneratedQuizDto quizDto = quizGenerationService.generateQuiz(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 
     @GetMapping("/{quizId}")
-    public ResponseEntity<GeneratedQuizDto> getQuizById(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable Long quizId
-    ){
-        GeneratedQuizDto quizDto = quizGenerationService.getQuizById(quizId, userDetails);
+    public ResponseEntity<GeneratedQuizDto> getQuizById(@PathVariable Long quizId) {
+
+        GeneratedQuizDto quizDto = quizGenerationService.getQuizById(quizId);
         return ResponseEntity.status(HttpStatus.CREATED).body(quizDto);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<QuizResponseDto>> getAllQuizzes(
-            @AuthenticationPrincipal UserDetails userDetails
-    ){
-        List<QuizResponseDto> quizzes =
-                quizGenerationService.getAllQuizzesByOwner(userDetails);
+    public ResponseEntity<List<QuizResponseDto>> getAllQuizzes() {
 
+        List<QuizResponseDto> quizzes = quizGenerationService.getAllQuizzesByOwner();
         return ResponseEntity.ok(quizzes);
     }
 
     @DeleteMapping("/{quizId}")
-    public ResponseEntity<HttpStatus> deleteQuiz(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable Long quizId
-    ){
-        quizGenerationService.deleteQuiz(quizId, userDetails);
+    public ResponseEntity<HttpStatus> deleteQuiz(@PathVariable Long quizId) {
 
+        quizGenerationService.deleteQuiz(quizId);
         return ResponseEntity.noContent().build();
     }
-
-
 }

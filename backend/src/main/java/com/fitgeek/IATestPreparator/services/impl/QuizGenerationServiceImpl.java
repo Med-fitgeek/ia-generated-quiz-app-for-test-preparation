@@ -15,11 +15,11 @@ import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
+import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +35,14 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
     private final QuizRepository quizRepository;
     private final UserRepository userRepository;
     private final KnowledgeSourceRepository sourceRepository;
+    private final CurrentUserService currentUserService;
 
 
     @Override
     @Transactional
-    public GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto,
-                                         UserDetails userDetails) {
+    public GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto) {
 
-        User owner = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         KnowledgeSource source = sourceRepository.findByIdAndOwnerId(requestDto.sourceId(), owner.getId())
                 .orElseThrow(() -> new BusinessException("KnowledgeSource not found or access denied", HttpStatus.NOT_FOUND));
@@ -78,9 +78,9 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     @Override
     @Transactional(readOnly = true)
-    public GeneratedQuizDto getQuizById(Long quizId, UserDetails userDetails) {
+    public GeneratedQuizDto getQuizById(Long quizId) {
 
-        User owner = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         Quiz quiz = quizRepository
                 .findByIdAndOwnerId(quizId, owner.getId())
@@ -91,9 +91,9 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuizResponseDto> getAllQuizzesByOwner(UserDetails userDetails) {
+    public List<QuizResponseDto> getAllQuizzesByOwner() {
 
-        User owner = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         List<Quiz> quizzes = quizRepository.findAllByOwnerId(owner.getId());
 
@@ -110,9 +110,9 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     @Override
     @Transactional
-    public void deleteQuiz(Long quizId, UserDetails userDetails) {
+    public void deleteQuiz(Long quizId) {
 
-        User owner = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         int deleted = quizRepository.deleteByIdAndOwnerId(quizId, owner.getId());
 
@@ -125,13 +125,6 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
     //------------------------------------------------------
     // Internal Logic
     //------------------------------------------------------
-
-    private User getUser(UserDetails userDetails) {
-        return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
-    }
-
-
     private Quiz buildQuiz(String title, User owner,
                            KnowledgeSource source,
                            GeneratedQuizDto generatedQuiz) {

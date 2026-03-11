@@ -7,7 +7,6 @@ import com.fitgeek.IATestPreparator.dtos.StrucuturedTextdto;
 import com.fitgeek.IATestPreparator.services.DocumentProcessingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

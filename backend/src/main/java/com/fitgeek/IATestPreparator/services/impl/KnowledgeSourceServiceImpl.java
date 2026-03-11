@@ -7,14 +7,13 @@ import com.fitgeek.IATestPreparator.entities.User;
 import com.fitgeek.IATestPreparator.entities.enums.SourceType;
 import com.fitgeek.IATestPreparator.excpetion.BusinessException;
 import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
-import com.fitgeek.IATestPreparator.repositories.UserRepository;
+import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.DocumentProcessingService;
 import com.fitgeek.IATestPreparator.services.KnowledgeSourceService;
 import com.fitgeek.IATestPreparator.services.StorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,19 +26,15 @@ import java.security.NoSuchAlgorithmException;
 public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
 
     private final KnowledgeSourceRepository knowledgeSourceRepository;
-    private final UserRepository userRepository;
     private final DocumentProcessingService documentProcessingService;
+    private final CurrentUserService currentUserService;
     private final StorageService storageService;
 
     @Override
     @Transactional
-    public KnowledgeNormalizedResponseDto createFromText(
-            StrucuturedTextdto textDto,
-            UserDetails userDetails
-    ) throws IOException {
+    public KnowledgeNormalizedResponseDto createFromText(StrucuturedTextdto textDto) throws IOException {
 
-        User owner = getUser(userDetails);
-
+        User owner = currentUserService.getCurrentUser();
         String checksum = documentProcessingService.calculateChecksumForText(textDto);
 
         return findExistingOrCreate(
@@ -57,9 +52,7 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
 
     @Override
     @Transactional
-    public KnowledgeNormalizedResponseDto createFromDocument(
-            MultipartFile file,
-            UserDetails userDetails
+    public KnowledgeNormalizedResponseDto createFromDocument(MultipartFile file
     ) throws IOException, NoSuchAlgorithmException {
 
         if (file.isEmpty()) {
@@ -68,7 +61,7 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
 
         validateExtension(file.getOriginalFilename());
 
-        User owner = getUser(userDetails);
+        User owner = currentUserService.getCurrentUser();
 
         byte[] bytes = file.getBytes();
 
@@ -120,11 +113,6 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
                         throw new BusinessException("Creation failed : ", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 });
-    }
-
-    private User getUser(UserDetails userDetails) {
-        return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
     }
 
     private void validateExtension(String filename) {

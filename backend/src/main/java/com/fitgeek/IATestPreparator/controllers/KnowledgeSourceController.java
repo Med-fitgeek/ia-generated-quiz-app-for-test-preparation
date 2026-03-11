@@ -8,15 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequestMapping("/api/sources")
@@ -28,8 +23,7 @@ public class KnowledgeSourceController {
 
     @PostMapping(value ="/upload", consumes = "multipart/form-data")
     public ResponseEntity<KnowledgeNormalizedResponseDto> uploadSource(
-            @ModelAttribute KnowledgeRequestDto requestDto,
-            @AuthenticationPrincipal UserDetails userDetails) throws Exception {
+            @ModelAttribute KnowledgeRequestDto requestDto) throws Exception {
 
         boolean hasDocument = requestDto.file() != null && !requestDto.file().isEmpty();
         boolean hasText = requestDto.strucuturedTextDto() != null;
@@ -38,8 +32,8 @@ public class KnowledgeSourceController {
             throw new BusinessException("You must provide either a document or structured text", HttpStatus.BAD_REQUEST);
 
         KnowledgeNormalizedResponseDto response = hasDocument
-                ? knowledgeSourceService.createFromDocument(requestDto.file(), userDetails)
-                : knowledgeSourceService.createFromText(requestDto.strucuturedTextDto(), userDetails);
+                ? knowledgeSourceService.createFromDocument(requestDto.file())
+                : knowledgeSourceService.createFromText(requestDto.strucuturedTextDto());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
