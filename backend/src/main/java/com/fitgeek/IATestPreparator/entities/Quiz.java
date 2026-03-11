@@ -1,11 +1,7 @@
 package com.fitgeek.IATestPreparator.entities;
 
-import jakarta.annotation.PreDestroy;
 import jakarta.persistence.*;
 import lombok.*;
-
-import org.aspectj.weaver.patterns.TypePatternQuestions;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +39,7 @@ public class Quiz {
         question.setQuiz(this);
     }
 
-    @PreDestroy
+    @PrePersist
     public void onCreate() {
         this.generatedAt = LocalDateTime.now();
     }
