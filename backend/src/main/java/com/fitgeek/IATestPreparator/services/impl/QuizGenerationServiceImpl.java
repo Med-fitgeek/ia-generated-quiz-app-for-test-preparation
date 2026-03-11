@@ -18,6 +18,7 @@ import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +45,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
         User owner = getUser(userDetails);
 
         KnowledgeSource source = sourceRepository.findByIdAndOwnerId(requestDto.sourceId(), owner.getId())
-                .orElseThrow(() -> new BusinessException("KnowledgeSource not found or access denied"));
+                .orElseThrow(() -> new BusinessException("KnowledgeSource not found or access denied", HttpStatus.NOT_FOUND));
 
         String systemInstructions = promptStrategy.buildPrompt(
                 requestDto.numberOfQuestions(),
@@ -71,7 +72,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
             return mapToDto(savedQuiz);
 
         } catch (Exception e) {
-            throw new BusinessException("AI quiz generation failed" + e);
+            throw new BusinessException("AI quiz generation failed", HttpStatus.INTERNAL_SERVER_ERROR  );
         }
     }
 
@@ -83,7 +84,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
         Quiz quiz = quizRepository
                 .findByIdAndOwnerId(quizId, owner.getId())
-                .orElseThrow(() -> new BusinessException("Quiz not found or access denied"));
+                .orElseThrow(() -> new BusinessException("Quiz not found or access denied", HttpStatus.NOT_FOUND));
 
         return mapToDto(quiz);
     }
@@ -116,7 +117,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
         int deleted = quizRepository.deleteByIdAndOwnerId(quizId, owner.getId());
 
         if (deleted == 0) {
-            throw new BusinessException("Quiz not found or access denied");
+            throw new BusinessException("Quiz not found or access denied", HttpStatus.BAD_REQUEST);
         }
 }
 
@@ -127,7 +128,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
     }
 
 

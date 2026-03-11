@@ -9,19 +9,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<String> handleBusinessException(BusinessException e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity
+                .status(e.getStatus())
+                .body(e.getMessage());
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> handleIllegalState(IllegalStateException e) {
-        String msg = e.getMessage();
-        if (msg.contains("Invalid credentials")) {
-            return ResponseEntity.status(401).body(msg);
-        } else if (msg.contains("already exists")) {
-            return ResponseEntity.status(409).body(msg);
-        } else {
-            return ResponseEntity.badRequest().body(msg);
-        }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleUnknown(Exception e) {
+        return ResponseEntity
+                .internalServerError()
+                .body("Unexpected server error");
     }
-
 }

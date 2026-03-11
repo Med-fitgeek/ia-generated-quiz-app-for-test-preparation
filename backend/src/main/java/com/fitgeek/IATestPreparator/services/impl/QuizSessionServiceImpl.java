@@ -10,6 +10,7 @@ import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +39,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         Quiz quiz = quizRepository
                 .findByIdAndOwnerId(quizId, user.getId())
-                .orElseThrow(() -> new BusinessException("Quiz not found or access denied"));
+                .orElseThrow(() -> new BusinessException("Quiz not found or access denied", HttpStatus.NOT_FOUND));
 
         return quizSessionRepository
                 .findActiveSession(user.getId(), quiz.getId())
@@ -88,7 +89,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         QuizSession session = quizSessionRepository
                 .findByIdAndUserId(sessionId, user.getId())
-                .orElseThrow(() -> new BusinessException("Session not found or access denied"));
+                .orElseThrow(() -> new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND));
 
         validateSessionState(session);
         validateAnswerCount(session, request);
@@ -117,7 +118,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         QuizSession session = quizSessionRepository
                 .findByIdAndUserId(sessionId, user.getId())
-                .orElseThrow(() -> new BusinessException("Session not found or access denied"));
+                .orElseThrow(() -> new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND));
 
         return mapToSessionDto(session);
     }
@@ -146,7 +147,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                 .deleteByIdAndUserId(sessionId, user.getId());
 
         if (deleted == 0) {
-            throw new BusinessException("Session not found or access denied");
+            throw new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -201,7 +202,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
     private void validateSessionState(QuizSession session) {
 
         if (session.getStatus() == SessionStatus.COMPLETED) {
-            throw new BusinessException("Session already submitted");
+            throw new BusinessException("Session already submitted", HttpStatus.CONFLICT);
         }
     }
 
@@ -214,7 +215,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
         int received = request.answers().size();
 
         if (expected != received) {
-            throw new BusinessException("Answer count mismatch");
+            throw new BusinessException("Answer count mismatch", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -228,7 +229,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
     }
 
     private SessionResponseDto mapToSessionDto(QuizSession session) {

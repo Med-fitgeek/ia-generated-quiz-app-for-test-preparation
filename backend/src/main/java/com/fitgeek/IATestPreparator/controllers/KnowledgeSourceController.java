@@ -35,7 +35,7 @@ public class KnowledgeSourceController {
         boolean hasText = requestDto.strucuturedTextDto() != null;
 
         if (hasDocument == hasText)
-            throw new BusinessException("You must provide either a document or structured text");
+            throw new BusinessException("You must provide either a document or structured text", HttpStatus.BAD_REQUEST);
 
         KnowledgeNormalizedResponseDto response = hasDocument
                 ? knowledgeSourceService.createFromDocument(requestDto.file(), userDetails)

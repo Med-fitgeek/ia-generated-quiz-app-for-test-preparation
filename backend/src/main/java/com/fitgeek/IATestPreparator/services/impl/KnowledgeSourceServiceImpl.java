@@ -11,6 +11,7 @@ import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.DocumentProcessingService;
 import com.fitgeek.IATestPreparator.services.KnowledgeSourceService;
 import com.fitgeek.IATestPreparator.services.StorageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -62,7 +63,7 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
     ) throws IOException, NoSuchAlgorithmException {
 
         if (file.isEmpty()) {
-            throw new BusinessException("File is empty");
+            throw new BusinessException("File is empty", HttpStatus.BAD_REQUEST);
         }
 
         validateExtension(file.getOriginalFilename());
@@ -116,14 +117,14 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
                         return new KnowledgeNormalizedResponseDto(saved.getId());
 
                     } catch (Exception e) {
-                        throw new BusinessException("Creation failed : " + e);
+                        throw new BusinessException("Creation failed : ", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 });
     }
 
     private User getUser(UserDetails userDetails) {
         return userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
     }
 
     private void validateExtension(String filename) {
@@ -131,7 +132,7 @@ public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
                 !(filename.toLowerCase().endsWith(".pdf")
                         || filename.toLowerCase().endsWith(".docx")
                         || filename.toLowerCase().endsWith(".csv"))) {
-            throw new BusinessException("File type not supported");
+            throw new BusinessException("File type not supported", HttpStatus.BAD_REQUEST);
         }
     }
 
