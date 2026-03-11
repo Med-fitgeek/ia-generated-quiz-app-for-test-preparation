@@ -19,6 +19,8 @@ import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,21 +93,20 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuizResponseDto> getAllQuizzesByOwner() {
+    public Page<QuizResponseDto> getAllQuizzesByOwner(Pageable pageable) {
 
         User owner = currentUserService.getCurrentUser();
 
-        List<Quiz> quizzes = quizRepository.findAllByOwnerId(owner.getId());
+        Page<Quiz> quizzes = quizRepository.findAllByOwnerId(owner.getId(), pageable);
 
-        return quizzes.stream()
+        return quizzes
                 .map(quiz -> new QuizResponseDto(
                         quiz.getId(),
                         quiz.getOwner().getId(),
                         quiz.getTitle(),
                         quiz.getGeneratedAt(),
                         quiz.getNumberOfSessions()
-                ))
-                .toList();
+                ));
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.fitgeek.IATestPreparator.repositories;
 
 import com.fitgeek.IATestPreparator.entities.QuizSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +23,7 @@ public interface QuizSessionRepository extends JpaRepository<QuizSession, Long> 
 
     Optional<QuizSession> findByIdAndUserId(Long id, Long userId);
 
-    List<QuizSession> findAllByUserId(Long id);
+    Page<QuizSession> findAllByUserId(Long id, Pageable pageable);
 
     int deleteByIdAndUserId(Long sessionId, Long userId);
 }

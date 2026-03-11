@@ -3,6 +3,8 @@ package com.fitgeek.IATestPreparator.controllers;
 import com.fitgeek.IATestPreparator.dtos.*;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,9 +43,9 @@ public class SessionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SessionResponseDto>> getAllSessions() {
+    public ResponseEntity<Page<SessionResponseDto>> getAllSessions(Pageable pageable) {
 
-        List<SessionResponseDto> sessions = quizSessionService.getAllSessionsByOwner();
+        Page<SessionResponseDto> sessions = quizSessionService.getAllSessionsByOwner(pageable);
         return ResponseEntity.ok(sessions);
     }
 

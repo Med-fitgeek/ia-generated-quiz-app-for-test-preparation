@@ -5,6 +5,8 @@ import com.fitgeek.IATestPreparator.dtos.QuizGenerationRequestDto;
 import com.fitgeek.IATestPreparator.dtos.QuizResponseDto;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,9 +36,10 @@ public class QuizGenerationController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<QuizResponseDto>> getAllQuizzes() {
+    public ResponseEntity<Page<QuizResponseDto>> getAllQuizzes(Pageable pageable) {
 
-        List<QuizResponseDto> quizzes = quizGenerationService.getAllQuizzesByOwner();
+        Page<QuizResponseDto> quizzes =
+                quizGenerationService.getAllQuizzesByOwner(pageable);
         return ResponseEntity.ok(quizzes);
     }
 

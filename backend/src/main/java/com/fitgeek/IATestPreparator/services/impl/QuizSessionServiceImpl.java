@@ -11,6 +11,8 @@ import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
 import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -122,16 +124,14 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SessionResponseDto> getAllSessionsByOwner() {
+    public Page<SessionResponseDto> getAllSessionsByOwner(Pageable pageable) {
 
         User owner = currentUserService.getCurrentUser();
 
-        List<QuizSession> sessions =
-                quizSessionRepository.findAllByUserId(owner.getId());
+        Page<QuizSession> sessions =
+                quizSessionRepository.findAllByUserId(owner.getId(), pageable);
 
-        return sessions.stream()
-                .map(this::mapToSessionDto)
-                .toList();
+        return sessions.map(this::mapToSessionDto);
     }
 
     @Override
