@@ -4,15 +4,20 @@ import com.fitgeek.IATestPreparator.entities.enums.SourceType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "sources")
+@Table(
+        name = "sources",
+        indexes = {
+                @Index(name = "idx_source_owner", columnList = "owner_id"),
+                @Index(name = "idx_source_checksum", columnList = "checksum"),
+                @Index(name = "idx_source_owner_checksum", columnList = "owner_id, checksum")
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class KnowledgeSource {
+public class KnowledgeSource extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -23,10 +28,10 @@ public class KnowledgeSource {
     private User owner;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private SourceType sourceType; // DOCUMENT / TEXT
-
     @Column(nullable = false)
+    private SourceType sourceType;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String normalizedContent;
 
     private String originalFilename;
@@ -35,12 +40,4 @@ public class KnowledgeSource {
 
     @Column(nullable = false)
     private String checksum;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }

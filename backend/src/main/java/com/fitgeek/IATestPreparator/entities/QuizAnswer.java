@@ -4,7 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "quiz_answers")
+@Table(
+        name = "quiz_answers",
+        indexes = {
+                @Index(name = "idx_answer_session", columnList = "session_id"),
+                @Index(name = "idx_answer_question", columnList = "question_id")
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -23,10 +29,7 @@ public class QuizAnswer {
     @JoinColumn(name = "session_id", nullable = false)
     private QuizSession session;
 
-    @Column(nullable = false)
     private int selectedIndex;
 
-    @Column(nullable = false)
     private boolean correct;
 }
-
