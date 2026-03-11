@@ -23,7 +23,7 @@
     <div class="quiz-progress">
       <div class="progress-bar">
         <div class="progress-fill"
-             [style.width.%]="(questionIndex / quiz.generatedQuestions.length) * 100">
+             [style.width.%]="((questionIndex + 1) / quiz.generatedQuestions.length) * 100">
         </div>
       </div>
       <span>
