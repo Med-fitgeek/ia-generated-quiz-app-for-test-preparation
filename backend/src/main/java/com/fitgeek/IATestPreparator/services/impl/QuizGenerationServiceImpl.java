@@ -16,6 +16,7 @@ import com.fitgeek.IATestPreparator.repositories.KnowledgeSourceRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import com.fitgeek.IATestPreparator.services.QuizGenerationService;
+import com.fitgeek.IATestPreparator.services.RateLimitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.domain.Page;
@@ -41,12 +42,14 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
     private final QuizRepository quizRepository;
     private final KnowledgeSourceRepository sourceRepository;
     private final CurrentUserService currentUserService;
+    private final RateLimitService rateLimitService;
 
     @Override
     @Transactional
     public GeneratedQuizDto generateQuiz(QuizGenerationRequestDto requestDto) {
 
         User owner = currentUserService.getCurrentUser();
+        rateLimitService.checkQuizGenerationLimit(owner.getId());
 
         log.info(
                 "User {} requested quiz generation: sourceId={}, numberOfQuestions={}, difficulty={}",
