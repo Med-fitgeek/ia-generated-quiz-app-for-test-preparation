@@ -2,35 +2,33 @@
 
   <h1>Quiz Review</h1>
 
-  <div class="score">
-    Score: {{review.rate}}%
+  <div class="score-card">
+    <h2>Your score</h2>
+    <div class="score">{{review.rate}}%</div>
   </div>
-
-  <!-- AI Recommendation -->
 
   <div class="ai-report" *ngIf="report">
     <h2>AI Recommendation</h2>
     <p>{{report.recommendations}}</p>
   </div>
 
-  <!-- Questions -->
-
   <div *ngFor="let q of review.questions; let i = index" class="question-card">
 
     <h3>Question {{i + 1}}</h3>
 
-    <p>{{q.statement}}</p>
+    <p class="statement">{{q.statement}}</p>
 
-    <ul>
+    <ul class="choices">
 
       <li
         *ngFor="let choice of q.choices; let idx = index"
-        [class.correct]="idx === q.correctIndex"
-        [class.user]="idx === q.userAnswer"
+        [ngClass]="{
+          'correct': idx === q.correctIndex,
+          'wrong': idx === q.userAnswer && idx !== q.correctIndex,
+          'user': idx === q.userAnswer
+        }"
       >
-
         {{choice}}
-
       </li>
 
     </ul>
