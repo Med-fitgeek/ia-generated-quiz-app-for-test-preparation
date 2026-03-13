@@ -15,5 +15,5 @@ public record SessionResponseDto (
         Long id,
         SessionStatus status,
         int totalQuestions,
-        Long scorePercentage
+        Long rate
 ) {}

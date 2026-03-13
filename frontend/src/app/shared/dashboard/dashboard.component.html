@@ -21,6 +21,53 @@
       </div>
     </div>
 
+
+    <div class="sessions-card">
+
+      <div class="sessions-header">
+        <h3>Vos sessions recentes</h3>
+      </div>
+
+      <div *ngIf="sessions.length === 0" class="empty-state">
+        Aucun quiz enregistre pour le moment.
+      </div>
+
+      <div class="sessions-list">
+
+        <div
+          class="session-item"
+          *ngFor="let session of sessions"
+        >
+
+          <div class="session-info">
+            <span class="session-id">
+              Session #{{session.id}}
+            </span>
+          </div>
+
+          <div class="session-score"
+            [ngClass]="{
+              'good': session.rate >= 80,
+              'medium': session.rate >= 50 && session.rate < 80,
+              'bad': session.rate < 50
+            }"
+          >
+            {{session.rate}}%
+          </div>
+
+          <button
+            class="review-btn"
+            (click)="goToReview(session.id)"
+          >
+            Review
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
     <router-outlet></router-outlet>
 
   </div>

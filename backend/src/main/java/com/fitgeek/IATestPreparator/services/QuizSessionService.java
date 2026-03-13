@@ -1,8 +1,6 @@
 package com.fitgeek.IATestPreparator.services;
 
-import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
-import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
-import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
+import com.fitgeek.IATestPreparator.dtos.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,4 +22,9 @@ public interface QuizSessionService {
 
     @Transactional
     void deleteSession(Long sessionId);
+
+    QuizReviewDto getSessionResult(Long sessionId);
+
+    @Transactional(readOnly = true)
+    QuizReportDto getSessionReport(Long sessionId);
 }

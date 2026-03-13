@@ -1,9 +1,12 @@
-<div class="quiz-page" *ngIf="state !== null">
+<div *ngIf="loading" class="loader"></div>
 
+<div class="quiz-page" *ngIf="!loading">
+  
   <!-- ERROR -->
   <div *ngIf="error" class="alert alert-error">
     {{ error }}
   </div>
+  
 
   <!-- READY -->
   <div *ngIf="state === 'READY'" class="quiz-center">
@@ -23,7 +26,7 @@
     <div class="quiz-progress">
       <div class="progress-bar">
         <div class="progress-fill"
-             [style.width.%]="(questionIndex / quiz.generatedQuestions.length) * 100">
+             [style.width.%]="((questionIndex + 1) / quiz.generatedQuestions.length) * 100">
         </div>
       </div>
       <span>

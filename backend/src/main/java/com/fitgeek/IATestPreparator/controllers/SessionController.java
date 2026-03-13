@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/sessions")
 @RequiredArgsConstructor
@@ -19,7 +17,7 @@ import java.util.List;
 public class SessionController {
 
     private final QuizSessionService quizSessionService;
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<SessionResponseDto> createSession(@RequestBody  Long quizId) {
 
         SessionResponseDto sessionResponseDto = quizSessionService.getOrCreateSession(quizId);
@@ -54,6 +52,25 @@ public class SessionController {
 
         quizSessionService.deleteSession(sessionId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{sessionId}/result")
+    public ResponseEntity<QuizReviewDto> getSessionResult(
+            @PathVariable Long sessionId
+    ) {
+
+        return ResponseEntity.ok(
+                quizSessionService.getSessionResult(sessionId)
+        );
+    }
+
+    @GetMapping("/{sessionId}/report")
+    public ResponseEntity<QuizReportDto> getReport(
+            @PathVariable Long sessionId) {
+
+        QuizReportDto report = quizSessionService.getSessionReport(sessionId);
+
+        return ResponseEntity.ok(report);
     }
 
 }

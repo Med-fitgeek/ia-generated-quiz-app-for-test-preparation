@@ -50,6 +50,11 @@ export const routes: Routes = [
         component: AccountComponent
       }
     ]
+  },
+  {
+    path: 'quiz-review/:sessionId',
+    loadComponent: () => import('./features/quiz-review/quiz-review.component').then(m => m.QuizReviewComponent),
+    canActivate: [authGuard]
   }
 ];
 

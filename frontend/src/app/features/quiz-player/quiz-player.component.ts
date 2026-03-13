@@ -31,6 +31,7 @@ export class QuizPlayerComponent implements OnInit {
   sessionId!: number;
   questionIndex = 0;
   selectedAnswers: (number)[] = [];
+  loading = true;
 
   rate = 0;
 
@@ -50,6 +51,7 @@ export class QuizPlayerComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (!idParam) {
@@ -63,20 +65,22 @@ export class QuizPlayerComponent implements OnInit {
 
     if (cachedQuiz) {
       this.initializeQuiz(cachedQuiz);
+      this.loading = false;
       return;
     }
 
     this.quizService.getQuizById(this.quizId).subscribe({
       next: (res: GeneratedQuizDto) => {
         this.initializeQuiz(res);
+        this.loading = false;
       },
       error: (err) => {
         this.error =
           err?.error?.message ||
           'No quiz was found please return to quiz generation.';
+        this.loading = false;
       }
     });
-
   }
 
   private initializeQuiz(quiz: GeneratedQuizDto): void {
@@ -132,12 +136,14 @@ export class QuizPlayerComponent implements OnInit {
       answers: this.selectedAnswers
     };
 
-    
-
     this.sessionService.submitSession(this.sessionId, request).subscribe({
-      next: (res: ResultResponseDto) => {
-        this.rate = res.rate;
-        this.state = 'COMPLETED';
+      next: (res) => {
+
+        this.router.navigate([
+          '/quiz-review',
+          this.sessionId
+        ]);
+
       },
       error : (err) => {
         this.error = err?.error?.message || 'Erreur lors du traitement des réponses, réessayez plus tard'

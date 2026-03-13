@@ -1,0 +1,43 @@
+<h1 class="text-accent">Quiz Review</h1>
+
+<div class="container quiz-container" *ngIf="!loading">
+
+  <div class="score-card">
+    <h2>Your score</h2>
+    <div class="score">{{review.rate}}%</div>
+  </div>
+
+  <div class="ai-report" *ngIf="report">
+    <h2>AI Recommendation</h2>
+    <p>{{report.recommendations}}</p>
+  </div>
+
+  <div *ngFor="let q of review.questions; let i = index" class="question-card">
+
+    <h3>Question {{i + 1}}</h3>
+
+    <p class="statement">{{q.statement}}</p>
+
+    <ul class="choices">
+
+      <li
+        *ngFor="let choice of q.choices; let idx = index"
+        [ngClass]="{
+          'correct': idx === q.correctIndex,
+          'wrong': idx === q.userAnswer && idx !== q.correctIndex,
+          'user': idx === q.userAnswer
+        }"
+      >
+        {{choice}}
+      </li>
+
+    </ul>
+
+    <div class="explanation">
+      <strong>Explanation:</strong>
+      {{q.explanation}}
+    </div>
+
+  </div>
+
+</div>
