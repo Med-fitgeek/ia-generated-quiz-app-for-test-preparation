@@ -1,0 +1,23 @@
+.question-card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.correct {
+  color: green;
+  font-weight: bold;
+}
+
+.user {
+  border-left: 4px solid orange;
+  padding-left: 5px;
+}
+
+.ai-report {
+  background: #f5f7ff;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}

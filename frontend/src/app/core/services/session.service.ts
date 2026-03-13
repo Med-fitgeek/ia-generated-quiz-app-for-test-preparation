@@ -5,6 +5,8 @@ import { Observable } from "rxjs";
 import { ResultResponseDto } from "../models/result-response-dto.model";
 import { environment } from "../../../environments/environment";
 import { SubmitAnswerRequestDto } from "../models/submit-answer-request-dto.models";
+import { QuizReviewDto } from "../models/quiz-review-dto.model";
+import { QuizReportDto } from "../models/quiz-report-dto.model";
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
@@ -51,4 +53,11 @@ export class SessionService {
     return this.http.delete<void>(`${this.serviceUrl}/${sessionId}`);
   }
 
+  getSessionResult(sessionId: number) {
+  return this.http.get<QuizReviewDto>(`${this.apiUrl}/${sessionId}/result`);
+  }
+
+  getSessionReport(sessionId: number) {
+    return this.http.get<QuizReportDto>(`${this.apiUrl}/${sessionId}/report`);
+  }
 }
