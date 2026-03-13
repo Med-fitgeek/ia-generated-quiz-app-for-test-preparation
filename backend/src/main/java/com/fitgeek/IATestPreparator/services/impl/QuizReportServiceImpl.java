@@ -1,6 +1,6 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
-import com.fitgeek.IATestPreparator.Prompting.Impl.ReportPromptV1Strategy;
+import com.fitgeek.IATestPreparator.Prompting.ReportingPromptStrategy;
 import com.fitgeek.IATestPreparator.entities.Question;
 import com.fitgeek.IATestPreparator.entities.QuizReport;
 import com.fitgeek.IATestPreparator.entities.QuizSession;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class QuizReportServiceImpl implements QuizReportService {
 
     private final ChatClient chatClient;
-    private final ReportPromptV1Strategy promptStrategy;
+    private final ReportingPromptStrategy promptStrategy;
 
     @Override
     public QuizReport generateReport(QuizSession session) {

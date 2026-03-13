@@ -1,6 +1,6 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
-import com.fitgeek.IATestPreparator.Prompting.PromptStrategy;
+import com.fitgeek.IATestPreparator.Prompting.GenerationPromptStrategy;
 import com.fitgeek.IATestPreparator.Utils.GeneratedQuizValidator;
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuestionDto;
 import com.fitgeek.IATestPreparator.dtos.GeneratedQuizDto;
@@ -38,7 +38,7 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
             LoggerFactory.getLogger(QuizGenerationServiceImpl.class);
 
     private final ChatClient chatClient;
-    private final PromptStrategy promptStrategy;
+    private final GenerationPromptStrategy promptStrategy;
     private final QuizRepository quizRepository;
     private final KnowledgeSourceRepository sourceRepository;
     private final CurrentUserService currentUserService;
