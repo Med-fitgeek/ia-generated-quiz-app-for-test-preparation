@@ -56,4 +56,23 @@ public class SessionController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{sessionId}/result")
+    public ResponseEntity<QuizReviewDto> getSessionResult(
+            @PathVariable Long sessionId
+    ) {
+
+        return ResponseEntity.ok(
+                quizSessionService.getSessionResult(sessionId)
+        );
+    }
+
+    @GetMapping("/{sessionId}/report")
+    public ResponseEntity<QuizReportDto> getReport(
+            @PathVariable Long sessionId) {
+
+        QuizReportDto report = quizSessionService.getSessionReport(sessionId);
+
+        return ResponseEntity.ok(report);
+    }
+
 }

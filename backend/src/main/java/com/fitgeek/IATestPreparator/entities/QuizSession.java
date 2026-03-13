@@ -46,7 +46,7 @@ public class QuizSession extends BaseEntity {
 
     private int totalQuestions;
 
-    private Long scorePercentage;
+    private Long rate;
 
     @CreationTimestamp
     private LocalDateTime startedAt;

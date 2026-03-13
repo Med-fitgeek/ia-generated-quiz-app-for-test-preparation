@@ -35,9 +35,13 @@ public class QuizReportServiceImpl implements QuizReportService {
                 .call()
                 .content();
 
+        int score = session.getRate() != null
+                ? session.getRate().intValue()
+                : 0;
+
         return QuizReport.builder()
                 .session(session)
-                .rate(session.getRate().intValue())
+                .rate(score)
                 .correctAnswers(session.getCorrectCount())
                 .totalQuestions(session.getTotalQuestions())
                 .recommendations(recommendation)

@@ -1,15 +1,14 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
-import com.fitgeek.IATestPreparator.dtos.ResultResponseDto;
-import com.fitgeek.IATestPreparator.dtos.SessionResponseDto;
-import com.fitgeek.IATestPreparator.dtos.SubmitSessionRequestDto;
+import com.fitgeek.IATestPreparator.dtos.*;
 import com.fitgeek.IATestPreparator.entities.*;
 import com.fitgeek.IATestPreparator.entities.enums.SessionStatus;
 import com.fitgeek.IATestPreparator.excpetion.BusinessException;
+import com.fitgeek.IATestPreparator.repositories.QuizReportRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizRepository;
 import com.fitgeek.IATestPreparator.repositories.QuizSessionRepository;
-import com.fitgeek.IATestPreparator.repositories.UserRepository;
 import com.fitgeek.IATestPreparator.services.CurrentUserService;
+import com.fitgeek.IATestPreparator.services.QuizReportService;
 import com.fitgeek.IATestPreparator.services.QuizSessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,8 @@ public class QuizSessionServiceImpl implements QuizSessionService {
     private final QuizSessionRepository quizSessionRepository;
     private final QuizRepository quizRepository;
     private final CurrentUserService currentUserService;
+    private final QuizReportService quizReportService;
+    private final QuizReportRepository quizReportRepository;
 
     //------------------------------------------------------
     // Create or Resume Session
@@ -54,7 +55,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                         session.getId(),
                         session.getStatus(),
                         session.getTotalQuestions(),
-                        session.getScorePercentage()
+                        session.getRate()
                 ))
                 .orElseGet(() -> createNewSession(owner, quiz));
     }
@@ -81,7 +82,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                 saved.getId(),
                 saved.getStatus(),
                 saved.getTotalQuestions(),
-                saved.getScorePercentage()
+                saved.getRate()
 
         );
     }
@@ -111,6 +112,8 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                 .getSeconds();
 
         finalizeSession(session, correctCount, roundedRate, duration);
+        QuizReport report = quizReportService.generateReport(session);
+        quizReportRepository.save(report);
 
         log.info(
                 "Quiz session submitted: sessionId={} userId={} score={}%",
@@ -120,8 +123,6 @@ public class QuizSessionServiceImpl implements QuizSessionService {
         );
 
         return new ResultResponseDto(
-                correctCount,
-                session.getTotalQuestions(),
                 roundedRate
         );
     }
@@ -160,9 +161,70 @@ public class QuizSessionServiceImpl implements QuizSessionService {
         int deleted = quizSessionRepository
                 .deleteByIdAndUserId(sessionId, owner.getId());
 
-        if (deleted == 0) {
+        if (deleted == 0)
             throw new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND);
-        }
+    }
+
+    @Override
+    public QuizReviewDto getSessionResult(Long sessionId) {
+
+        User owner = currentUserService.getCurrentUser();
+
+        QuizSession session = quizSessionRepository
+                .findByIdAndUserId(sessionId, owner.getId())
+                .orElseThrow(() -> new BusinessException("Session not found", HttpStatus.NOT_FOUND));
+
+        Quiz quiz = session.getQuiz();
+
+        List<QuestionReviewDto> questions = quiz.getQuestions()
+                .stream()
+                .map(question -> {
+
+                    QuizAnswer answer = session.getAnswers()
+                            .stream()
+                            .filter(a -> a.getQuestion().getId().equals(question.getId()))
+                            .findFirst()
+                            .orElse(null);
+
+                    int userAnswer = answer != null ? answer.getSelectedIndex(): -1;
+
+                    return mapToQuestionReviewDto(question, userAnswer);
+
+                })
+                .toList();
+
+        return new QuizReviewDto(
+                session.getRate(),
+                questions);
+    }
+
+
+    @Transactional(readOnly = true)
+    @Override
+    public QuizReportDto getSessionReport(Long sessionId) {
+
+        User owner = currentUserService.getCurrentUser();
+
+        QuizSession session = quizSessionRepository
+                .findByIdAndUserId(sessionId, owner.getId())
+                .orElseThrow(() ->
+                        new BusinessException(
+                                "Session not found",
+                                HttpStatus.NOT_FOUND));
+
+        QuizReport report = quizReportRepository
+                .findBySessionId(sessionId)
+                .orElseThrow(() ->
+                        new BusinessException(
+                                "Report not found",
+                                HttpStatus.NOT_FOUND));
+
+        return new QuizReportDto(
+                report.getRate(),
+                report.getCorrectAnswers(),
+                report.getTotalQuestions(),
+                report.getRecommendations()
+        );
     }
 
 
@@ -207,7 +269,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         session.setCorrectCount(correctCount);
         session.setTotalQuestions(session.getQuiz().getQuestions().size());
-        session.setScorePercentage(score);
+        session.setRate(score);
         session.setDurationInSeconds(duration);
         session.setCompletedAt(LocalDateTime.now());
         session.setStatus(SessionStatus.COMPLETED);
@@ -247,8 +309,22 @@ public class QuizSessionServiceImpl implements QuizSessionService {
                 session.getId(),
                 session.getStatus(),
                 session.getTotalQuestions(),
-                session.getScorePercentage()
+                session.getRate()
 
+        );
+    }
+
+    private QuestionReviewDto mapToQuestionReviewDto(
+            Question question,
+            int userAnswer
+    ) {
+
+        return new QuestionReviewDto(
+                question.getStatement(),
+                question.getChoices(),
+                question.getCorrectIndex(),
+                userAnswer,
+                question.getExplanation()
         );
     }
 }
