@@ -142,9 +142,13 @@ export class QuizPlayerComponent implements OnInit {
     };
 
     this.sessionService.submitSession(this.sessionId, request).subscribe({
-      next: (res: ResultResponseDto) => {
-        this.rate = res.rate;
-        this.state = 'COMPLETED';
+      next: (res) => {
+
+        this.router.navigate([
+          '/quiz-review',
+          this.sessionId
+        ]);
+
       },
       error : (err) => {
         this.error = err?.error?.message || 'Erreur lors du traitement des réponses, réessayez plus tard'

@@ -40,16 +40,19 @@ export class DashboardHomeComponent {
   private loadDashboard(): void {
 
     this.quizService.getAllQuizzes().subscribe({
-      next: (quizzes: QuizResponseDto[]) => {
+      next: (page) => {
 
-        this.totalQuizzes = quizzes.length;
+        const quizzes = page.content;
+
+        this.totalQuizzes = page.totalElements;
 
         this.quizzes = quizzes.map(q => ({
           quizId: q.id,
-          title: q.title, // tu n'as pas encore de titre côté backend
+          title: q.title,
           generatedAt: q.generatedAt,
           sessionsCount: q.numberOfSessions
         }));
+
       }
     });
 
@@ -60,7 +63,7 @@ export class DashboardHomeComponent {
 
         if (sessions.length > 0) {
           const totalScore =
-            sessions.reduce((sum, s) => sum + (s.scorePercentage ?? 0), 0);
+            sessions.reduce((sum, s) => sum + (s.rate ?? 0), 0);
 
           this.averageScore =
             Math.round(totalScore / sessions.length);

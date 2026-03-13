@@ -19,7 +19,34 @@
           M
         </div>
       </div>
-    </div>
+
+      <div class="sessions-card">
+
+        <h3>Your recent quiz sessions</h3>
+
+        <div *ngIf="sessions.length === 0">
+          No sessions yet.
+        </div>
+
+        <div
+          class="session-item"
+          *ngFor="let session of sessions"
+        >
+
+          <span>Session #{{session.id}}</span>
+
+          <span>{{session.rate}}%</span>
+
+          <button
+            class="btn btn-secondary"
+            (click)="goToReview(session.id)"
+          >
+            Review
+          </button>
+
+        </div>
+
+      </div>
 
     <router-outlet></router-outlet>
 

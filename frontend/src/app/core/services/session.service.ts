@@ -18,13 +18,9 @@ export class SessionService {
 
   createSession(quizId: number): Observable<SessionResponseDto> {
 
-    const payload = {
-      quizId: quizId
-    };
-
     return this.http.post<SessionResponseDto>(
-      `${this.serviceUrl}/create`,
-      payload
+      `${this.serviceUrl}`,
+      quizId
     );
   }
 
@@ -49,15 +45,19 @@ export class SessionService {
     return this.http.get<SessionResponseDto[]>(`${this.serviceUrl}`);
   }
 
+  getSessions() {
+  return this.http.get<any>(`${this.apiUrl}`);
+  }
+
   deleteSession(sessionId: number): Observable<void> {
     return this.http.delete<void>(`${this.serviceUrl}/${sessionId}`);
   }
 
   getSessionResult(sessionId: number) {
-  return this.http.get<QuizReviewDto>(`${this.apiUrl}/${sessionId}/result`);
+    return this.http.get<QuizReviewDto>(`${this.serviceUrl}/${sessionId}/result`);
   }
 
   getSessionReport(sessionId: number) {
-    return this.http.get<QuizReportDto>(`${this.apiUrl}/${sessionId}/report`);
+    return this.http.get<QuizReportDto>(`${this.serviceUrl}/${sessionId}/report`);
   }
 }

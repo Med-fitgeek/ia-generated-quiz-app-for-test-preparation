@@ -4,5 +4,5 @@ export interface SessionResponseDto {
     id: number;
     status: SessionStatus;
     totalQuestions: number;
-    scorePercentage: number;
+    rate: number;
 }
