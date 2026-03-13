@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,8 +40,9 @@ public class QuizSession extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SessionStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuizAnswer> answers;
+    private List<QuizAnswer> answers = new ArrayList<>();
 
     private int correctCount;
 

@@ -23,8 +23,12 @@ public class QuizReportServiceImpl implements QuizReportService {
 
         String missedContext = buildMissedQuestionsContext(session);
 
+        int score = session.getRate() != null
+                ? session.getRate().intValue()
+                : 0;
+
         String prompt = promptStrategy.buildPrompt(
-                session.getRate().intValue(),
+                score,
                 session.getCorrectCount(),
                 session.getTotalQuestions(),
                 missedContext
@@ -34,10 +38,6 @@ public class QuizReportServiceImpl implements QuizReportService {
                 .system(prompt)
                 .call()
                 .content();
-
-        int score = session.getRate() != null
-                ? session.getRate().intValue()
-                : 0;
 
         return QuizReport.builder()
                 .session(session)
