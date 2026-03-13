@@ -20,7 +20,7 @@ public class QuizReport {
     private QuizSession session;
 
     @Column(nullable = false)
-    private int score;
+    private double rate;
 
     @Column(nullable = false)
     private int correctAnswers;
