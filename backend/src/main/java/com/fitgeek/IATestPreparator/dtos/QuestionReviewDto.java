@@ -6,6 +6,6 @@ public record QuestionReviewDto (
         String statement,
         List<String> choices,
         int userAnswer,
-        int correctAnswer,
+        int correctIndex,
         String explanation
-    ){}
+){}

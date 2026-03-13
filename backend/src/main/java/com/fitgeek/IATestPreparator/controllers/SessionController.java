@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class SessionController {
 
     private final QuizSessionService quizSessionService;
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<SessionResponseDto> createSession(@RequestBody  Long quizId) {
 
         SessionResponseDto sessionResponseDto = quizSessionService.getOrCreateSession(quizId);

@@ -135,7 +135,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         QuizSession session = quizSessionRepository
                 .findByIdAndUserId(sessionId, owner.getId())
-                .orElseThrow(() -> new BusinessException("Session not found or access denied", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException("Session not found", HttpStatus.NOT_FOUND));
 
         return mapToSessionDto(session);
     }
@@ -207,10 +207,7 @@ public class QuizSessionServiceImpl implements QuizSessionService {
 
         QuizSession session = quizSessionRepository
                 .findByIdAndUserId(sessionId, owner.getId())
-                .orElseThrow(() ->
-                        new BusinessException(
-                                "Session not found",
-                                HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException("Session not found", HttpStatus.NOT_FOUND));
 
         QuizReport report = quizReportRepository
                 .findBySessionId(sessionId)

@@ -2,7 +2,7 @@ package com.fitgeek.IATestPreparator.dtos;
 
 public record QuizReportDto(
         double rate,
-        int correctAnswers,
+        int correctIndex,
         int totalQuestions,
         String recommendations
 ) {
