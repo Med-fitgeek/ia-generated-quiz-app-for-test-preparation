@@ -7,6 +7,7 @@ import { SessionService } from '../../core/services/session.service';
 
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
 import { QuizResponseDto } from '../../core/models/quiz-response-dto.model';
+import { Page } from '../../core/models/page.model';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -56,19 +57,19 @@ export class DashboardHomeComponent {
       }
     });
 
-    this.sessionService.getAllSessions().subscribe({
-      next: (sessions: SessionResponseDto[]) => {
+    this.sessionService.getAllSessions().subscribe(
+      (sessions: Page<SessionResponseDto>) => {
 
-        this.totalSessions = sessions.length;
+        this.totalSessions = sessions.content.length;
 
-        if (sessions.length > 0) {
+        if (sessions.content.length > 0) {
           const totalScore =
-            sessions.reduce((sum, s) => sum + (s.rate ?? 0), 0);
+            sessions.content.reduce((sum, s) => sum + (s.rate ?? 0), 0);
 
           this.averageScore =
-            Math.round(totalScore / sessions.length);
+            Math.round(totalScore / sessions.content.length);
         }
-      }
+      
     });
   }
 

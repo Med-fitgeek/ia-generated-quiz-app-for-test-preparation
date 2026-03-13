@@ -1,3 +1,15 @@
+.quiz-container {
+    max-width: 50%;
+    height: 800px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+h1 {
+    text-align: center;
+    margin: 50px;
+}
+
 .question-card {
   background: white;
   padding: 24px;
@@ -40,4 +52,33 @@
   padding: 20px;
   border-radius: 12px;
   margin-bottom: 30px;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-secondary) var(--color-bg);
+}
+
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
+  border-radius: var(--radius-lg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-primary-hover), var(--color-secondary-hover));
 }

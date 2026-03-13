@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit {
 
     this.sessionService.getAllSessions()
       .subscribe(res => {
-        this.sessions = res;
+        this.sessions = res.content;
       });
 
   }

@@ -7,6 +7,7 @@ import { environment } from "../../../environments/environment";
 import { SubmitAnswerRequestDto } from "../models/submit-answer-request-dto.models";
 import { QuizReviewDto } from "../models/quiz-review-dto.model";
 import { QuizReportDto } from "../models/quiz-report-dto.model";
+import { Page } from "../models/page.model";
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
@@ -41,8 +42,11 @@ export class SessionService {
     );
   }
 
-  getAllSessions(): Observable<SessionResponseDto[]> {
-    return this.http.get<SessionResponseDto[]>(`${this.serviceUrl}`);
+  getAllSessions(
+    page: number = 0,
+    size: number = 10
+  ): Observable<Page<SessionResponseDto>> {
+    return this.http.get<Page<SessionResponseDto>>(`${this.serviceUrl}?page=${page}&size=${size}`);
   }
 
   getSessions() {

@@ -132,11 +132,6 @@ export class QuizPlayerComponent implements OnInit {
   
   submitAnswers(): void {
 
-    if (this.selectedAnswers.includes(0)) {
-      this.error = "Please answer all questions before submitting.";
-      return;
-    }
-
     const request: SubmitAnswerRequestDto = {
       answers: this.selectedAnswers
     };
