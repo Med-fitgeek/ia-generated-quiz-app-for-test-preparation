@@ -42,6 +42,7 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (res) => {
         this.successMessage = 'Connexion réussie.'; 
+        this.authService['authInitializedSubject'].next(true);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

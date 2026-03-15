@@ -10,6 +10,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       let message = "An unexpected error occurred";
 
+      if (req.url.includes('/auth')) {
+        return throwError(() => error);
+      }
+      
       if (error.status === 0) {
         message = "Unable to reach server";
       }
