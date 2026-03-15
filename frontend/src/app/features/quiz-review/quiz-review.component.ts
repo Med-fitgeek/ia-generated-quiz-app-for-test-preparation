@@ -44,7 +44,8 @@ export class QuizReviewComponent implements OnInit {
       .subscribe({
         next: res => {
           this.report = res;
-        }
+        },
+        error: () => this.error = "Unable to load session report"
       });
   }
 
