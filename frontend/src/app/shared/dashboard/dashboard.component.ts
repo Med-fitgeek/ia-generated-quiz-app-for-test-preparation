@@ -5,7 +5,7 @@ import { QuizSummary } from '../../core/models/quiz-summary.model';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
 import { SessionService } from '../../core/services/session.service';
-
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -17,14 +17,16 @@ import { SessionService } from '../../core/services/session.service';
 
 
 export class DashboardComponent implements OnInit {
-  quizzes: QuizSummary[] = [];
 
+  quizzes: QuizSummary[] = [];
   sessions: SessionResponseDto[] = [];
+  userName = '';
 
 
   constructor(
     private router: Router,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +36,9 @@ export class DashboardComponent implements OnInit {
         this.sessions = res.content;
       });
 
+    this.userService.getCurrentUser().subscribe(user => {
+      this.userName = user.username;
+    });
   }
 
   newQuiz(): void {

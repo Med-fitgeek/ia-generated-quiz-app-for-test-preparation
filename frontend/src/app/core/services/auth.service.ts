@@ -91,16 +91,4 @@ export class AuthService {
     });
 
   }
-
-  getCurrentUser(): Observable<User> {
-
-    return this.http.get<User>(`${this.apiUrl}/auth/me`);
-
-  }
-
-  updateUser(data: Partial<User>): Observable<User> {
-
-    return this.http.put<User>(`${this.apiUrl}/auth/me`, data);
-
-  }
 }

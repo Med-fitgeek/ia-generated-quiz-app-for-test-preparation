@@ -46,27 +46,6 @@ public class AuthController {
         return authService.refresh(refreshToken);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<UserDto> getCurrentUser() {
-
-        User user = currentUserService.getCurrentUser();
-
-        return ResponseEntity.ok(
-                new UserDto(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail()
-                )
-        );
-    }
-
-    @PutMapping("/me")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto dto) {
-
-        UserDto updatedUser = currentUserService.UpdateUser(dto);
-        return ResponseEntity.ok(updatedUser);
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<Void> logout() {
         ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
