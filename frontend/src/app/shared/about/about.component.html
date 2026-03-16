@@ -1,0 +1,82 @@
+<section class="about container">
+
+  <!-- HERO -->
+  <div class="about-hero">
+
+    <h1 class="gradient-text">
+      Apprendre plus vite grâce à l'IA
+    </h1>
+
+    <p>
+      QuizGen transforme vos connaissances en quiz interactifs générés par
+      intelligence artificielle afin d'améliorer la mémorisation et la pratique.
+    </p>
+
+  </div>
+
+
+  <!-- STORY -->
+  <div class="about-story card">
+
+    <h2 class="text-accent">
+      Pourquoi QuizGen ?
+    </h2>
+
+    <p>
+      Lorsque l'on étudie, le problème n'est souvent pas de lire ou de comprendre
+      un cours, mais de **tester réellement ses connaissances**.
+    </p>
+
+    <p>
+      QuizGen a été conçu pour résoudre ce problème : transformer n'importe
+      quel contenu en **quiz interactifs générés automatiquement** afin de
+      favoriser l'apprentissage actif.
+    </p>
+
+  </div>
+
+
+  <!-- VALUES -->
+  <div class="about-values">
+
+    <h2 class="text-accent">
+      Notre vision
+    </h2>
+
+    <div class="values-grid">
+
+      <div class="value card" *ngFor="let v of values">
+
+        <h3>
+          {{v.title}}
+        </h3>
+
+        <p>
+          {{v.text}}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- CTA -->
+  <div class="about-cta card accent-border">
+
+    <h2>
+      Prêt à tester QuizGen ?
+    </h2>
+
+    <p>
+      Commencez à générer vos premiers quiz et améliorez votre apprentissage.
+    </p>
+
+    <a routerLink="/register" class="btn btn-primary">
+      Commencer gratuitement
+    </a>
+
+  </div>
+
+</section>
