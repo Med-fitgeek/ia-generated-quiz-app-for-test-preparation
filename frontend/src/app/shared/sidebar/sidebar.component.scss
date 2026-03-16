@@ -10,7 +10,7 @@
   font-weight: bold;
   font-size: 1.3rem;
   margin-bottom: 40px;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -27,6 +27,6 @@
 
 .sidebar-nav a:hover,
 .sidebar-nav a.active {
-  background: rgba(78,205,196,0.08);
-  color: var(--color-secondary);
+  background: rgb(78, 108, 205, 0.08);
+  color: var(--color-primary);
 }

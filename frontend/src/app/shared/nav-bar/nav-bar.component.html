@@ -5,18 +5,19 @@
     </a>
 
     <div class="flex-between gap-5">
-      <a routerLink="/" class="nav-link">Fonctionnalités</a>
-      <a routerLink="/" class="nav-link">FAQ</a>
-      <a routerLink="/knowledge" class="nav-link">A propos</a>
+
+      <ng-container *ngIf="isAuthenticated$ | async">
+        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+      </ng-container>
+      
+      <a routerLink="/faq" class="nav-link">FAQ</a>
+      <a routerLink="/about" class="nav-link">A propos</a>
 
       <ng-container *ngIf="!(isAuthenticated$ | async)">
         <a routerLink="/login" class="btn btn-secondary">Se connecter</a>
         <a routerLink="/register" class="btn btn-primary">S'inscrire</a>
       </ng-container>
 
-      <ng-container *ngIf="isAuthenticated$ | async">
-        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
-      </ng-container>
     </div>
   </div>
 </nav>

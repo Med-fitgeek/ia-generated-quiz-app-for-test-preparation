@@ -16,41 +16,5 @@ import { UserService } from '../../core/services/user.service';
 })
 
 
-export class DashboardComponent implements OnInit {
-
-  quizzes: QuizSummary[] = [];
-  sessions: SessionResponseDto[] = [];
-  userName = '';
-
-
-  constructor(
-    private router: Router,
-    private sessionService: SessionService,
-    private userService: UserService
-  ) {}
-
-  ngOnInit(): void {
-
-    this.sessionService.getAllSessions()
-      .subscribe(res => {
-        this.sessions = res.content;
-      });
-
-    this.userService.getCurrentUser().subscribe(user => {
-      this.userName = user.username;
-    });
-  }
-
-  newQuiz(): void {
-    this.router.navigate(['/source']);
-  }
-
-  openQuiz(quizId: number): void {
-    this.router.navigate(['/quiz-preview', quizId]);
-  }
-
-  goToReview(sessionId: number) : void {
-    this.router.navigate(['/quiz-review', sessionId])
-  }
-}
+export class DashboardComponent  {}
 

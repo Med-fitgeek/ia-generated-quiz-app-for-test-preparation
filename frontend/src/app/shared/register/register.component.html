@@ -19,12 +19,12 @@
 
         <div class="flex flex-col gap-1">
           <label for="username">Nom d'utilisateur</label>
-          <input id="username" type="text" formControlName="username" placeholder="ex: medoune" />
+          <input id="username" type="text" formControlName="username" placeholder="ex: username" />
         </div>
 
         <div class="flex flex-col gap-1">
           <label for="email">Email</label>
-          <input id="email" type="email" formControlName="email" placeholder="ex: medoune@mail.com" />
+          <input id="email" type="email" formControlName="email" placeholder="ex: test@mail.com" />
         </div>
 
         <div class="flex flex-col gap-1">
@@ -39,8 +39,7 @@
 
         <button 
           class="btn btn-primary" 
-          type="submit" 
-          [disabled]="registerForm.invalid || loading">
+          type="submit" >
           <span *ngIf="!loading">Créer le compte</span>
           <span *ngIf="loading">Création...</span>
         </button>

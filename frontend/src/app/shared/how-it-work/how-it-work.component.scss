@@ -1,36 +1,127 @@
-.section-process {
-  padding: 140px 0;
-  background: #ffffff;
+.how {
+  padding: 50px 20px;
+  background: white;
+  text-align: center;
 }
 
-.timeline {
-  display: flex;
-  justify-content: space-between;
+.header {
+  max-width: 750px;
+  margin: auto;
+  margin-bottom: 80px;
+
+  h2 {
+    font-size: 42px;
+    font-weight: 700;
+    margin: 16px 0;
+  }
+
+  p {
+    font-size: 18px;
+    color: #6b7280;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: #e5e8f3;
+  color: #4e6ccd;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 40px;
+  max-width: 1100px;
+  margin: auto;
   position: relative;
-  margin-top: 60px;
 }
 
-.timeline::before {
-  content: '';
+.line {
   position: absolute;
-  top: 20px;
-  left: 10%;
-  right: 10%;
+  top: 30px;
+  left: 0;
+  right: 0;
   height: 2px;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  background: linear-gradient(
+    to right,
+    #4ECDC4,
+    #4e6ccd
+  );
+  z-index: 0;
 }
 
 .step {
-  text-align: center;
-  width: 30%;
   position: relative;
+  z-index: 1;
+
+  h3 {
+    font-size: 20px;
+    margin: 20px 0 10px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 15px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
 }
 
-.dot {
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+.icon-container {
+  width: 70px;
+  height: 70px;
+  margin: auto;
   border-radius: 50%;
-  margin: 0 auto 20px auto;
-  box-shadow: 0 0 20px rgba(78,205,196,0.4);
+  background: white;
+  border: 2px solid #4ECDC4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #4ECDC4;
+}
+
+.number {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  background: #4e6ccd;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+@media (max-width: 1000px) {
+
+  .steps {
+    grid-template-columns: repeat(2,1fr);
+    gap: 60px;
+  }
+
+  .line {
+    display: none;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .steps {
+    grid-template-columns: 1fr;
+  }
+
+  .header h2 {
+    font-size: 32px;
+  }
+
 }

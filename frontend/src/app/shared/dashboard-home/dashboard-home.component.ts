@@ -8,6 +8,8 @@ import { SessionService } from '../../core/services/session.service';
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
 import { QuizResponseDto } from '../../core/models/quiz-response-dto.model';
 import { Page } from '../../core/models/page.model';
+import { UserService } from '../../core/services/user.service';
+
 
 @Component({
   selector: 'app-dashboard-home',
@@ -23,10 +25,14 @@ export class DashboardHomeComponent {
   averageScore = 0;
 
   quizzes: any[] = [];
+  sessions: SessionResponseDto[] = [];
+  userName = '';
+
 
   constructor(
     private quizService: QuizService,
     private sessionService: SessionService,
+    private userService: UserService,
     private router: Router
   ) {}
 
@@ -39,6 +45,10 @@ export class DashboardHomeComponent {
   //------------------------------------------------------
 
   private loadDashboard(): void {
+
+    this.userService.getCurrentUser().subscribe(user => {
+      this.userName = user.username;
+    });
 
     this.quizService.getAllQuizzes().subscribe({
       next: (page) => {
@@ -55,11 +65,13 @@ export class DashboardHomeComponent {
         }));
 
       }
+      
     });
 
     this.sessionService.getAllSessions().subscribe(
       (sessions: Page<SessionResponseDto>) => {
 
+        this.sessions = sessions.content;
         this.totalSessions = sessions.content.length;
 
         if (sessions.content.length > 0) {
@@ -95,6 +107,18 @@ export class DashboardHomeComponent {
       }
     });
 
+  }
+
+  goToReview(sessionId: number) : void {
+    this.router.navigate(['/quiz-review', sessionId])
+  }
+
+  newQuiz(): void {
+    this.router.navigate(['/source']);
+  }
+
+  openQuiz(quizId: number): void {
+    this.router.navigate(['/quiz-preview', quizId]);
   }
 
 }
