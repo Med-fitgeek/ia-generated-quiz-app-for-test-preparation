@@ -1,0 +1,45 @@
+<section class="features">
+
+  <div class="features-header">
+
+    <div class="badge">
+      ✨ Fonctionnalités
+    </div>
+
+    <h2>
+      Une nouvelle façon d'apprendre
+    </h2>
+
+    <p>
+      Découvrez les fonctionnalités qui rendent GenQuiz.ia unique
+    </p>
+
+  </div>
+
+
+  <div class="features-grid">
+
+    <div class="feature-card" *ngFor="let feature of features">
+
+      <div class="icon-wrapper" [ngClass]="feature.color">
+
+        <lucide-icon
+          [name]="feature.icon"
+          size="28"
+        ></lucide-icon>
+
+      </div>
+
+      <h3>
+        {{feature.title}}
+      </h3>
+
+      <p>
+        {{feature.description}}
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
