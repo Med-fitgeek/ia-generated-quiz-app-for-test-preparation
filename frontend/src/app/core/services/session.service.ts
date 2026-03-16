@@ -49,10 +49,6 @@ export class SessionService {
     return this.http.get<Page<SessionResponseDto>>(`${this.serviceUrl}?page=${page}&size=${size}`);
   }
 
-  getSessions() {
-  return this.http.get<any>(`${this.apiUrl}`);
-  }
-
   deleteSession(sessionId: number): Observable<void> {
     return this.http.delete<void>(`${this.serviceUrl}/${sessionId}`);
   }
