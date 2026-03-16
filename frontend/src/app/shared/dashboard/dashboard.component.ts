@@ -5,7 +5,7 @@ import { QuizSummary } from '../../core/models/quiz-summary.model';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
 import { SessionService } from '../../core/services/session.service';
-
+import { UserService } from '../../core/services/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,36 +16,5 @@ import { SessionService } from '../../core/services/session.service';
 })
 
 
-export class DashboardComponent implements OnInit {
-  quizzes: QuizSummary[] = [];
-
-  sessions: SessionResponseDto[] = [];
-
-
-  constructor(
-    private router: Router,
-    private sessionService: SessionService
-  ) {}
-
-  ngOnInit(): void {
-
-    this.sessionService.getAllSessions()
-      .subscribe(res => {
-        this.sessions = res.content;
-      });
-
-  }
-
-  newQuiz(): void {
-    this.router.navigate(['/source']);
-  }
-
-  openQuiz(quizId: number): void {
-    this.router.navigate(['/quiz-preview', quizId]);
-  }
-
-  goToReview(sessionId: number) : void {
-    this.router.navigate(['/quiz-review', sessionId])
-  }
-}
+export class DashboardComponent  {}
 

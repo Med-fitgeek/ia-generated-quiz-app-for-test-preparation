@@ -1,27 +1,51 @@
-<section class="section-process">
-  <div class="container process-wrapper">
+<section class="how">
 
-    <h2 class="title">Comment ça fonctionne</h2>
+  <div class="header">
 
-    <div class="timeline">
-      <div class="step">
-        <div class="dot"></div>
-        <h3>Importez</h3>
-        <p>Ajoutez votre document.</p>
+    <div class="badge">
+      Comment ça marche
+    </div>
+
+    <h2>
+      Comment ça marche
+    </h2>
+
+    <p>
+      Générez votre contenu pédagogique en 4 étapes simples
+    </p>
+
+  </div>
+
+
+  <div class="steps">
+
+    <div class="line"></div>
+
+    <div class="step" *ngFor="let step of steps">
+
+      <div class="icon-container">
+
+        <lucide-icon
+          [name]="step.icon"
+          size="32">
+        </lucide-icon>
+
+        <span class="number">
+          {{step.step}}
+        </span>
+
       </div>
 
-      <div class="step">
-        <div class="dot"></div>
-        <h3>Générez</h3>
-        <p>Création automatique du quiz.</p>
-      </div>
+      <h3>
+        {{step.title}}
+      </h3>
 
-      <div class="step">
-        <div class="dot"></div>
-        <h3>Analysez</h3>
-        <p>Rapport détaillé immédiat.</p>
-      </div>
+      <p>
+        {{step.description}}
+      </p>
+
     </div>
 
   </div>
+
 </section>

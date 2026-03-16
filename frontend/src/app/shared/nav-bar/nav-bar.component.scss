@@ -1,17 +1,16 @@
 .navbar {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  padding: var(--space-4) 0;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .brand img {
-  max-width: 80%;
+  max-width: 60%;
 }
 
 .nav-link {
   color: var(--color-text-muted);
-  font-size: 1.5em;
+  font-size: 1.2em;
   font-weight: bold;
   text-decoration: none;
   transition: color 0.2s ease;
@@ -29,7 +28,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
   transition: width 0.3s ease;
 }
 

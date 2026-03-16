@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
@@ -42,6 +42,7 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (res) => {
         this.successMessage = 'Connexion réussie.'; 
+        this.authService['authInitializedSubject'].next(true);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

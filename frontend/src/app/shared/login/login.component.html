@@ -24,7 +24,7 @@
             id="email"
             type="email"
             formControlName="email"
-            placeholder="ex: medoune@mail.com"
+            placeholder="ex: test@mail.com"
           />
         </div>
 
@@ -41,7 +41,6 @@
         <button
           class="btn btn-primary"
           type="submit"
-          [disabled]="loginForm.invalid || loading"
         >
           <span *ngIf="!loading">Se connecter</span>
           <span *ngIf="loading">Connexion...</span>

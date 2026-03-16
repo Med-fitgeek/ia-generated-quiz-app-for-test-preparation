@@ -55,6 +55,15 @@ export const routes: Routes = [
     path: 'quiz-review/:sessionId',
     loadComponent: () => import('./features/quiz-review/quiz-review.component').then(m => m.QuizReviewComponent),
     canActivate: [authGuard]
-  }
+  },
+  {
+    path: 'faq',
+    loadComponent: () => import('./shared/faq/faq.component').then(m => m.FaqComponent),
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./shared/about/about.component').then(m => m.AboutComponent),
+  },
+
 ];
 

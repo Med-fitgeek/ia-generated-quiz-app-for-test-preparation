@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class GenerationGenerationPromptV1Strategy implements GenerationPromptStrategy {
+public class GenerationPromptV1Strategy implements GenerationPromptStrategy {
 
     @Override
     public String buildPrompt(int numberOfQuestion, Difficulty difficulty) {

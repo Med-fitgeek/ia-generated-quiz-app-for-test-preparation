@@ -1,68 +1,78 @@
-<div class="container source-container">
-  <h1>Import Knowledge Source</h1>
-  <p>Upload a document or provide structured text to generate quizzes.</p>
+<div class="wrapper">
+  <div class="upload-header">
 
-  <div class="source-btn-container flex gap-3" style="margin-bottom: 16px;">
+      <h1 class="gradient-text">
+        Créer un quiz à partir de votre contenu
+      </h1>
+
+      <p>
+        Importez un document ou saisissez votre texte pour générer automatiquement le quiz.
+      </p>
+
+  </div>
+
+
+  <div class="toggle">
     <button
-      class="btn btn-secondary"
-      [class.btn-primary]="mode === 'file'"
+      class="toggle-btn"
+      [class.active]="mode === 'file'"
       (click)="setMode('file')"
     >
-      File
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      Déposer
     </button>
     <button
-      class="btn btn-secondary"
-      [class.btn-primary]="mode === 'text'"
+      class="toggle-btn"
+      [class.active]="mode === 'text'"
       (click)="setMode('text')"
     >
-      Structured Text
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Saisir
     </button>
   </div>
 
-  <div class="card">
-    <!-- Error -->
-    <div *ngIf="error" class="alert alert-error">
-      {{ error }}
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- FILE MODE -->
+  <div *ngIf="mode === 'file'" class="dropzone">
+    <label class="drop-area">
+      <input type="file" class="file-input" (change)="onFileSelected($event)" />
+      <svg class="cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <polyline points="16 16 12 12 8 16"/>
+        <line x1="12" y1="12" x2="12" y2="21"/>
+        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+      </svg>
+      <p class="drop-title">
+        {{ selectedFile ? selectedFile.name : 'Télécharger des fichiers' }}
+      </p>
+      <p class="drop-formats">.doc .docx .pdf .pptx .md .txt .html</p>
+    </label>
+  </div>
+
+  <!-- TEXT MODE -->
+  <div *ngIf="mode === 'text'" class="form-panel">
+    <div class="field">
+      <label class="label">Subject <span class="required">*</span></label>
+      <input class="input" [(ngModel)]="textDto.subject" placeholder="e.g. Spring Security basics" />
     </div>
-
-    <!-- File mode -->
-    <div *ngIf="mode === 'file'" class="flex-col gap-4">
-      <div class="flex-col gap-2">
-        <label>Select document (pdf, docx, csv)</label>
-        <input type="file" (change)="onFileSelected($event)" />
-        <p *ngIf="selectedFile">Selected: {{ selectedFile.name }}</p>
-      </div>
+    <div class="field">
+      <label class="label">Key concepts</label>
+      <textarea class="textarea" [(ngModel)]="textDto.keyConcepts" placeholder="JWT, Filters, Authentication..."></textarea>
     </div>
-
-    <!-- Text mode -->
-    <div *ngIf="mode === 'text'" class="flex-col gap-4">
-      <div class="flex-col gap-2">
-        <label>Subject *</label>
-        <input [(ngModel)]="textDto.subject" placeholder="e.g. Spring Security basics" />
-      </div>
-
-      <div class="flex-col gap-2">
-        <label>Key concepts</label>
-        <textarea [(ngModel)]="textDto.keyConcepts" placeholder="JWT, Filters, Authentication..."></textarea>
-      </div>
-
-      <div class="flex-col gap-2">
-        <label>Objectives *</label>
-        <textarea [(ngModel)]="textDto.objectives" placeholder="What the learner should master..."></textarea>
-      </div>
-
-      <div class="flex-col gap-2">
-        <label>Additional notes</label>
-        <textarea [(ngModel)]="textDto.additionalNotes" placeholder="Optional context..."></textarea>
-      </div>
+    <div class="field">
+      <label class="label">Objectives <span class="required">*</span></label>
+      <textarea class="textarea" [(ngModel)]="textDto.objectives" placeholder="What the learner should master..."></textarea>
     </div>
-
-    <div style="margin-top: 24px;">
-      <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
-        {{ loading ? 'Uploading...' : 'Suivant' }}
-      </button>
+    <div class="field">
+      <label class="label">Additional notes</label>
+      <textarea class="textarea" [(ngModel)]="textDto.additionalNotes" placeholder="Optional context..."></textarea>
     </div>
+  </div>
 
+  <div class="footer">
+    <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
+      {{ loading ? 'Uploading...' : 'Suivant' }}
+    </button>
     <div *ngIf="loading" class="loader"></div>
   </div>
 </div>

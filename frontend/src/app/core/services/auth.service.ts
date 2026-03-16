@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { User } from '../models/user-dto.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -67,7 +68,7 @@ export class AuthService {
       catchError(err => {
         this.accessToken = null;
         this.isAuthenticatedSubject.next(false);
-        this.router.navigate(['/login']);
+        this.authInitializedSubject.next(true);
         return throwError(() => err);
       })
     );
@@ -79,5 +80,15 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.accessToken;
+  }
+
+  initAuth(): void {
+    this.refreshAccessToken().subscribe({
+      next: () => {},
+      error: () => {
+        this.authInitializedSubject.next(true);
+      }
+    });
+
   }
 }

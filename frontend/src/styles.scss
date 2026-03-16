@@ -34,10 +34,10 @@ html, body {
   --color-surface: #ffffff;     /* Pure white */
   --color-card: #ffffff;        /* Card background */
   
-  --color-primary: #FF6B6B;     /* Coral red */
+  --color-primary: #4e6ccd;     /* Coral red */
   --color-secondary: #4ECDC4;   /* Turquoise */
   --color-primary-hover: #ff5252;
-  --color-secondary-hover: #3dbeb5;
+  --color-secondary-hover: #3f5dbe;
   
   --color-danger: #ff4757;
   --color-success: #26de81;
@@ -79,11 +79,11 @@ html, body {
    LAYOUT UTILS
 ========================= */
 .container {
-  max-width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-3);
-}
+  padding: var(--space-5);
 
+}
 .flex {
   display: flex;
 }
@@ -109,21 +109,21 @@ html, body {
    TYPOGRAPHY
 ========================= */
 h1 {
-  font-size: 3rem;
+  font-size: 2rem;
 }
 .title {
-  color: #4ECDC4;
+  color: #4e6ccd;
   font-size: 3rem;
   text-align: center;
 }
 h1, h2, h3, h4 {
-  margin: 0 0 var(--space-4) 0;
+  margin: 0 0 var(--space-1) 0;
   font-weight: 1000;
   color: #2d3436;
 }
 
 .text-accent { 
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -133,10 +133,11 @@ h2 { font-size: var(--font-lg); }
 h3 { font-size: 1.1rem; }
 
 p {
-  margin: 0 0 var(--space-3) 0;
+  margin: 0 0 var(--space-2) 0;
   color: var(--color-text-muted);
   line-height: 1.5;
-  font-size: 1.3rem;
+  color: #6b7280;
+  font-size: 18px;
 }
 
 /* =========================
@@ -227,7 +228,7 @@ textarea {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
   color: #ffffff;
   box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
 }
@@ -243,8 +244,8 @@ textarea {
 
 .btn-secondary {
   background-color: transparent;
-  color: var(--color-secondary);
-  border: 2px solid var(--color-secondary);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -313,7 +314,7 @@ textarea {
    EXTRAS / ACCENTS
 ========================= */
 .gradient-text {
-  background: linear-gradient(135deg, #FF6B6B, #4ECDC4);
+  background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -322,7 +323,7 @@ textarea {
 .accent-border {
   border: 2px solid transparent;
   background-image: linear-gradient(var(--color-card), var(--color-card)), 
-                    linear-gradient(135deg, #FF6B6B, #4ECDC4);
+                    linear-gradient(135deg, #4e6ccd, #4ECDC4);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }

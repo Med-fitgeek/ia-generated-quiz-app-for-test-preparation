@@ -23,7 +23,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError(err => {
 
       // Ne pas tenter refresh si c’est déjà un refresh
-      if (err.status === 401 && !req.url.includes('/auth/refresh')) {
+      if (err.status === 401 && !req.url.includes('/auth/refresh') && authService.getAccessToken()) {
 
         return authService.refreshAccessToken().pipe(
           switchMap(() => {

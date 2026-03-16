@@ -1,0 +1,124 @@
+.about {
+
+  margin-top: 80px;
+  margin-bottom: 80px;
+
+}
+
+
+/* HERO */
+
+.about-hero {
+
+  text-align: center;
+  max-width: 700px;
+  margin: auto;
+  margin-bottom: 70px;
+
+}
+
+.about-hero p {
+
+  margin-top: 15px;
+
+}
+
+
+/* STORY */
+
+.about-story {
+
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 70px;
+
+}
+
+
+/* STEPS */
+
+.about-steps {
+
+  margin-bottom: 80px;
+  text-align: center;
+
+}
+
+.steps-grid {
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+
+  margin-top: 40px;
+
+}
+
+.step {
+
+  text-align: center;
+
+}
+
+.step-number {
+
+  width: 45px;
+  height: 45px;
+
+  margin: auto;
+  margin-bottom: 15px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(135deg,#4e6ccd,#4ECDC4);
+  color: white;
+
+  font-weight: bold;
+
+}
+
+
+/* VALUES */
+
+.about-values {
+
+  text-align: center;
+  margin-bottom: 80px;
+
+}
+
+.values-grid {
+
+  margin-top: 40px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap: 30px;
+
+}
+
+.value {
+
+  text-align: center;
+
+}
+
+
+/* CTA */
+
+.about-cta {
+
+  text-align: center;
+  padding: 50px;
+
+}
+
+.about-cta p {
+
+  margin-top: 10px;
+
+}
