@@ -1,1 +1,67 @@
-<p>account works!</p>
+<div class="account-wrapper">
+
+  <div class="profile-card">
+
+    <div class="profile-header">
+
+      <div class="avatar">
+        {{ form.value.username?.charAt(0) }}
+      </div>
+
+      <div class="profile-info">
+        <h2>{{ form.value.username }}</h2>
+        <p>{{ form.value.email }}</p>
+      </div>
+
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      Chargement du profil...
+    </div>
+
+    <form
+      *ngIf="!loading"
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      class="profile-form"
+    >
+
+      <div class="form-group">
+
+        <label>Nom d'utilisateur</label>
+
+        <input
+          type="text"
+          formControlName="username"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Email</label>
+
+        <input
+          type="email"
+          formControlName="email"
+        >
+
+      </div>
+
+      <button class="save-btn">
+        Enregistrer les modifications
+      </button>
+
+      <p *ngIf="successMessage" class="success">
+        {{successMessage}}
+      </p>
+
+      <p *ngIf="errorMessage" class="error">
+        {{errorMessage}}
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
