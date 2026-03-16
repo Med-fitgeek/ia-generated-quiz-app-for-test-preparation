@@ -12,6 +12,7 @@ type Mode = 'file' | 'text';
   selector: 'app-knowledge-upload',
   imports: [CommonModule, FormsModule],
   templateUrl: './knowledge-upload.component.html',
+  styleUrl: './knowledge-upload.component.scss'
 })
 export class KnowledgeUploadComponent {
   mode: Mode = 'file';

@@ -79,11 +79,11 @@ html, body {
    LAYOUT UTILS
 ========================= */
 .container {
-  max-width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-3);
-}
+  padding: var(--space-5);
 
+}
 .flex {
   display: flex;
 }
