@@ -1,0 +1,64 @@
+<section class="faq-section container">
+
+  <div class="faq-header">
+
+    <h1 class="gradient-text">
+      Questions fréquentes
+    </h1>
+
+    <p>
+      Tout ce que vous devez savoir sur B-READY et la génération de quiz par IA.
+    </p>
+
+  </div>
+
+  <div class="faq-list">
+
+    <div
+      class="faq-card card"
+      *ngFor="let faq of faqs; let i = index"
+      [class.open]="faq.open"
+      (click)="toggle(i)"
+    >
+
+      <div class="faq-question">
+
+        <h3>
+          {{faq.question}}
+        </h3>
+
+        <span class="faq-icon">
+          {{ faq.open ? "−" : "+" }}
+        </span>
+
+      </div>
+
+      <div class="faq-answer" *ngIf="faq.open">
+
+        <p>
+          {{faq.answer}}
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="faq-cta card accent-border">
+
+    <h3>
+      Vous ne trouvez pas votre réponse ?
+    </h3>
+
+    <p>
+      Contactez-nous ou essayez directement de générer votre premier quiz.
+    </p>
+
+    <button class="btn btn-primary">
+      Commencer un quiz
+    </button>
+
+  </div>
+
+</section>
