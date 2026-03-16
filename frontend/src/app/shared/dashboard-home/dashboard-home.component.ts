@@ -6,15 +6,15 @@ import { QuizService } from '../../core/services/quiz.service';
 import { SessionService } from '../../core/services/session.service';
 
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
-import { QuizResponseDto } from '../../core/models/quiz-response-dto.model';
 import { Page } from '../../core/models/page.model';
 import { UserService } from '../../core/services/user.service';
+import { LucideAngularModule } from "lucide-angular";
 
 
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   templateUrl: './dashboard-home.component.html',
   styleUrl: './dashboard-home.component.scss'
 })
@@ -23,7 +23,7 @@ export class DashboardHomeComponent {
   totalQuizzes = 0;
   totalSessions = 0;
   averageScore = 0;
-
+  TraShIcon = 'Trash'
   quizzes: any[] = [];
   sessions: SessionResponseDto[] = [];
   userName = '';

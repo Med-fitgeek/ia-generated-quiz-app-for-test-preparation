@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { LucideAngularModule, FileText, Brain, Zap, BookOpen, LucideCheckCheck, Clock, Shield, ChartLine,  } from 'lucide-angular';
+import { LucideAngularModule, FileText, Brain, Zap, BookOpen, LucideCheckCheck, Clock, Shield, ChartLine, Trash,  } from 'lucide-angular';
 
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
@@ -30,7 +30,8 @@ export const appConfig: ApplicationConfig = {
         LucideCheckCheck,
         Clock,
         Shield,
-        ChartLine
+        ChartLine, 
+        Trash
       })
     )
     
