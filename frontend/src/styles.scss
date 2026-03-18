@@ -79,11 +79,20 @@ html, body {
    LAYOUT UTILS
 ========================= */
 .container {
+  width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
   padding: var(--space-5);
-
+  margin: 0 auto;
 }
+
+.container-sm {
+  max-width: 800px;
+}
+
+.container-lg {
+  max-width: 1400px;
+}
+
 .flex {
   display: flex;
 }
@@ -100,6 +109,16 @@ html, body {
   align-items: center;
 }
 
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-around { justify-content: space-around; }
+
+.flex-wrap { flex-wrap: wrap; }
+
 .gap-2 { gap: var(--space-2); }
 .gap-3 { gap: var(--space-3); }
 .gap-4 { gap: var(--space-4); }
@@ -108,19 +127,19 @@ html, body {
 /* =========================
    TYPOGRAPHY
 ========================= */
-h1 {
-  font-size: 2rem;
-}
 .title {
   color: #4e6ccd;
   font-size: 3rem;
   text-align: center;
 }
-h1, h2, h3, h4 {
-  margin: 0 0 var(--space-1) 0;
-  font-weight: 1000;
-  color: #2d3436;
-}
+h1 { font-size: var(--font-xl); }
+h2 { font-size: var(--font-lg); }
+h3 { font-size: var(--font-md); }
+
+.text-sm { font-size: var(--font-sm); }
+.text-md { font-size: var(--font-md); }
+.text-lg { font-size: var(--font-lg); }
+.text-xl { font-size: var(--font-xl); }
 
 .text-accent { 
   background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
@@ -155,21 +174,21 @@ p {
   box-shadow: var(--shadow-sm);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
+  width: 100%;
 }
+
 .card:hover {
   border-color: rgba(78, 205, 196, 0.3);
   box-shadow: var(--shadow-md);
 }
 
-.source-card {
-    max-width: 50%;
-}
 
 /* =========================
    FORMS
 ========================= */
 .form {
-  min-width: 40%;
+  width: 100%;
+  max-width: 500px;
 }
 
 label {
@@ -331,22 +350,28 @@ textarea {
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 768px) {
-  .container {
-    padding: var(--space-4);
-  }
-  
-  h1 {
-    font-size: 1.5rem;
-  }
-  
-  .hero {
-    padding: 60px 0;
+.grid {
+  display: grid;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Mobile par défaut */
+
+@media (min-width: 768px) {
+  .grid-2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 1024px) {
-  .card-section .flex {
-    flex-direction: column;
+@media (min-width: 1024px) {
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
