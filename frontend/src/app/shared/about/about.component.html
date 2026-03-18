@@ -3,13 +3,19 @@
   <!-- HERO -->
   <div class="about-hero">
 
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Propulsé par l'IA
+    </div>
+
     <h1 class="gradient-text">
-      Apprendre plus vite grâce à l'IA
+      Apprendre plus vite<br>grâce à l'IA
     </h1>
 
-    <p>
+    <p class="hero-subtitle">
       QuizGen transforme vos connaissances en quiz interactifs générés par
-      intelligence artificielle afin d'améliorer la mémorisation et la pratique.
+      intelligence artificielle — pour une mémorisation plus profonde et
+      une pratique qui fait vraiment progresser.
     </p>
 
   </div>
@@ -18,19 +24,23 @@
   <!-- STORY -->
   <div class="about-story card">
 
-    <h2 class="text-accent">
-      Pourquoi QuizGen ?
-    </h2>
+    <h2 class="text-accent">Pourquoi QuizGen ?</h2>
 
     <p>
-      Lorsque l'on étudie, le problème n'est souvent pas de lire ou de comprendre
-      un cours, mais de **tester réellement ses connaissances**.
+      Lorsque l'on étudie, le problème n'est souvent pas de lire ou de
+      comprendre un cours, mais de <strong>tester réellement ses
+      connaissances</strong>.
     </p>
+
+    <blockquote class="story-quote">
+      "La mémorisation ne vient pas de la relecture,<br>
+      elle vient de l'effort de se souvenir."
+    </blockquote>
 
     <p>
       QuizGen a été conçu pour résoudre ce problème : transformer n'importe
-      quel contenu en **quiz interactifs générés automatiquement** afin de
-      favoriser l'apprentissage actif.
+      quel contenu en <strong>quiz interactifs générés automatiquement</strong>
+      afin de favoriser l'apprentissage actif et durable.
     </p>
 
   </div>
@@ -39,21 +49,22 @@
   <!-- VALUES -->
   <div class="about-values">
 
-    <h2 class="text-accent">
-      Notre vision
-    </h2>
+    <div class="section-label">Notre vision</div>
+    <h2 class="text-accent">Ce en quoi nous croyons</h2>
 
     <div class="values-grid">
 
       <div class="value card" *ngFor="let v of values">
 
-        <h3>
-          {{v.title}}
-        </h3>
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path [attr.d]="v.icon" />
+          </svg>
+        </div>
 
-        <p>
-          {{v.text}}
-        </p>
+        <h3>{{ v.title }}</h3>
+        <p>{{ v.text }}</p>
 
       </div>
 
@@ -63,19 +74,26 @@
 
 
   <!-- CTA -->
-  <div class="about-cta card accent-border">
+  <div class="about-cta">
 
-    <h2>
-      Prêt à tester QuizGen ?
-    </h2>
+    <div class="cta-inner card accent-border">
 
-    <p>
-      Commencez à générer vos premiers quiz et améliorez votre apprentissage.
-    </p>
+      <div class="cta-content">
+        <h2>Prêt à changer votre façon d'apprendre ?</h2>
+        <p>
+          Rejoignez des milliers d'apprenants qui utilisent QuizGen pour
+          progresser plus vite.
+        </p>
+      </div>
 
-    <a routerLink="/register" class="btn btn-primary">
-      Commencer gratuitement
-    </a>
+      <div class="cta-action">
+        <a routerLink="/register" class="btn btn-primary cta-btn">
+          Commencer gratuitement
+        </a>
+        <span class="cta-hint">Aucune carte bancaire requise</span>
+      </div>
+
+    </div>
 
   </div>
 

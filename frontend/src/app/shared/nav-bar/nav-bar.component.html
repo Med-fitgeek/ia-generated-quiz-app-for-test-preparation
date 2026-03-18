@@ -1,17 +1,31 @@
 <nav class="navbar">
-  <div class="container flex-between">
+  <div class="container flex-between items-center">
+
     <a routerLink="/" class="brand">
       <img src="assets/img/b-ready.png" alt="logo">
     </a>
 
-    <div class="flex-between gap-5">
+    <!-- Burger -->
+    <button class="burger" (click)="toggleMenu()">
+      ☰
+    </button>
 
+    <!-- Menu -->
+    <div class="navbar-menu flex-between gap-5" [class.open]="isMenuOpen">
+
+      
+      <a routerLink="/about" class="nav-link">A propos</a>
+      <a routerLink="/faq" class="nav-link">FAQ</a>
       <ng-container *ngIf="isAuthenticated$ | async">
         <a routerLink="/dashboard" class="nav-link">Dashboard</a>
       </ng-container>
-      
-      <a routerLink="/faq" class="nav-link">FAQ</a>
-      <a routerLink="/about" class="nav-link">A propos</a>
+      <a routerLink="/dashboard/account" class="nav-link" (click)="close()">Mon compte</a>
+
+    <ng-container *ngIf="isAuthenticated$ | async">
+      <button class="btn btn-secondary" (click)="logout()">
+        Se déconnecter
+      </button>
+    </ng-container>
 
       <ng-container *ngIf="!(isAuthenticated$ | async)">
         <a routerLink="/login" class="btn btn-secondary">Se connecter</a>

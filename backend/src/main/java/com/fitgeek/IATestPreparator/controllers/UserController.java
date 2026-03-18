@@ -24,7 +24,8 @@ public class UserController {
                 new UserDto(
                         user.getId(),
                         user.getUsername(),
-                        user.getEmail()
+                        user.getEmail(),
+                        user.getCreatedAt()
                 )
         );
     }

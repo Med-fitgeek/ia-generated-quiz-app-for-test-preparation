@@ -1,31 +1,35 @@
-<h1 class="text-accent">Quiz Review</h1>
+<div class="container container-sm flex flex-col gap-5" *ngIf="!loading">
 
-<div class="container quiz-container" *ngIf="!loading">
-
-  <div class="score-card">
+  <!-- Score -->
+  <div class="card text-center">
     <h2>Your score</h2>
     <div class="score">{{review.rate}}%</div>
   </div>
 
-  <div class="ai-report" *ngIf="report">
+  <!-- AI -->
+  <div class="card" *ngIf="report">
     <h2>AI Recommendation</h2>
     <p>{{report.recommendations}}</p>
   </div>
 
-  <div *ngFor="let q of review.questions; let i = index" class="question-card">
+  <!-- QUESTION -->
+  <div class="card flex flex-col gap-3">
 
-    <h3>Question {{i + 1}}</h3>
+    <h3>Question {{currentIndex + 1}}</h3>
 
-    <p class="statement">{{q.statement}}</p>
+    <p class="statement">
+      {{review.questions[currentIndex].statement}}
+    </p>
 
-    <ul class="choices">
+    <ul class="choices flex flex-col gap-2">
 
       <li
-        *ngFor="let choice of q.choices; let idx = index"
+        *ngFor="let choice of review.questions[currentIndex].choices; let idx = index"
+        class="choice"
         [ngClass]="{
-          'correct': idx === q.correctIndex,
-          'wrong': idx === q.userAnswer && idx !== q.correctIndex,
-          'user': idx === q.userAnswer
+          'correct': idx === review.questions[currentIndex].correctIndex,
+          'wrong': idx === review.questions[currentIndex].userAnswer && idx !== review.questions[currentIndex].correctIndex,
+          'user': idx === review.questions[currentIndex].userAnswer
         }"
       >
         {{choice}}
@@ -35,8 +39,26 @@
 
     <div class="explanation">
       <strong>Explanation:</strong>
-      {{q.explanation}}
+      {{review.questions[currentIndex].explanation}}
     </div>
+
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="flex-between items-center">
+
+    <button class="btn btn-secondary" (click)="prev()" [disabled]="currentIndex === 0">
+      ← 
+    </button>
+
+    <div class="text-sm">
+      Question {{currentIndex + 1}} / {{review.questions.length}}
+    </div>
+
+    <button class="btn btn-primary" (click)="next()" 
+      [disabled]="currentIndex === review.questions.length - 1">
+       →
+    </button>
 
   </div>
 

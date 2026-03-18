@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -14,11 +15,27 @@ export class NavBarComponent {
 
   menuOpen = false;
 
-  isAuthenticated$ = this.authService.isAuthenticated$;
+  isAuthenticated$: Observable<boolean>;
+  isOpen = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+    this.isAuthenticated$ = this.authService.isAuthenticated$;
+  }
+  
+  
+  isMenuOpen = false;
+
   toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  close(): void {
+    this.isOpen = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.close();
   }
 
 

@@ -1,27 +1,19 @@
-.quiz-container {
-    max-width: 50%;
-    height: 800px;
-    overflow-y: auto;
-    overflow-x: hidden;
+.score {
+  font-size: var(--font-xl);
+  font-weight: bold;
 }
 
-h1 {
-    text-align: center;
-    margin: 50px;
+.statement {
+  font-weight: 500;
 }
 
-.question-card {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  margin-bottom: 24px;
+.choice {
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
 }
 
-.choices li {
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 6px;
-}
+/* États */
 
 .correct {
   background: #e6f7e6;
@@ -37,48 +29,11 @@ h1 {
   border-left: 4px solid #ff9800;
 }
 
-.score-card {
-  text-align: center;
-  margin-bottom: 30px;
+.explanation {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
 }
 
-.score {
-  font-size: 40px;
-  font-weight: bold;
-}
-
-.ai-report {
-  background: #f4f6ff;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-}
-
-/* =========================
-   SCROLLBAR
-========================= */
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-secondary) var(--color-bg);
-}
-
-/* Chrome / Edge / Safari */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
-  border-radius: var(--radius-lg);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--color-primary-hover), var(--color-secondary-hover));
+.navigation {
+  margin: var(--space-4) 0;
 }

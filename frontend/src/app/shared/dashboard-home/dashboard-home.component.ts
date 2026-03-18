@@ -8,13 +8,16 @@ import { SessionService } from '../../core/services/session.service';
 import { SessionResponseDto } from '../../core/models/session-response-dto.model';
 import { Page } from '../../core/models/page.model';
 import { UserService } from '../../core/services/user.service';
-import { LucideAngularModule } from "lucide-angular";
+import { DashboardHeaderComponent } from "../dashboard-header/dashboard-header.component";
+import { StatsGridComponent } from "../stats-grid/stats-grid.component";
+import { SessionsCardComponent } from "../sessions-card/sessions-card.component";
+import { QuizGridComponent } from "../quiz-grid/quiz-grid.component";
 
 
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, DashboardHeaderComponent, StatsGridComponent, SessionsCardComponent, QuizGridComponent],
   templateUrl: './dashboard-home.component.html',
   styleUrl: './dashboard-home.component.scss'
 })
@@ -23,7 +26,6 @@ export class DashboardHomeComponent {
   totalQuizzes = 0;
   totalSessions = 0;
   averageScore = 0;
-  TraShIcon = 'Trash'
   quizzes: any[] = [];
   sessions: SessionResponseDto[] = [];
   userName = '';

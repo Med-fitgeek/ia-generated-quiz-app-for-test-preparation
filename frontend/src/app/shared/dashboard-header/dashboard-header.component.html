@@ -1,0 +1,16 @@
+<div class="dashboard-header">
+  <div class="header-title">
+    <h2>Dashboard</h2>
+    <p class="muted">Bienvenue, {{ userName }}</p>
+  </div>
+
+  <div class="header-actions">
+    <button class="btn btn-primary" (click)="onNewQuiz()">
+      + Nouveau Quiz
+    </button>
+
+    <div class="profile-badge">
+      {{ userName.charAt(0).toUpperCase() }}
+    </div>
+  </div>
+</div>
