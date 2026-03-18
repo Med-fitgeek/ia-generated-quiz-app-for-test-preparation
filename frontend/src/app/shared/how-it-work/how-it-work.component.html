@@ -1,48 +1,50 @@
 <section class="how">
 
-  <div class="header">
+  <div class="how-header">
 
-    <div class="badge">
-      Comment ça marche
-    </div>
+    <div class="badge">Comment ça marche</div>
 
-    <h2>
-      Comment ça marche
-    </h2>
+    <h2>Générez votre quiz en <span class="gradient-text">4 étapes</span></h2>
 
-    <p>
-      Générez votre contenu pédagogique en 4 étapes simples
-    </p>
+    <p>Simple, rapide et efficace — de l'import à l'analyse en quelques secondes</p>
 
   </div>
 
+  <div class="steps-wrapper">
 
-  <div class="steps">
+    <!-- Connecting line (desktop) -->
+    <div class="connector-line"></div>
 
-    <div class="line"></div>
+    <div class="steps">
 
-    <div class="step" *ngFor="let step of steps">
+      <div class="step" *ngFor="let step of steps; let last = last">
 
-      <div class="icon-container">
+        <div class="step-icon-wrap">
 
-        <lucide-icon
-          [name]="step.icon"
-          size="32">
-        </lucide-icon>
+          <div class="step-ring"></div>
 
-        <span class="number">
-          {{step.step}}
-        </span>
+          <div class="icon-container">
+            <lucide-icon [name]="step.icon" size="28"></lucide-icon>
+          </div>
+
+          <span class="step-number">{{ step.step }}</span>
+
+        </div>
+
+        <div class="step-body">
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+
+        <!-- Arrow between steps (desktop) -->
+        <div class="step-arrow" *ngIf="!last">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
 
       </div>
-
-      <h3>
-        {{step.title}}
-      </h3>
-
-      <p>
-        {{step.description}}
-      </p>
 
     </div>
 
