@@ -19,7 +19,7 @@
       <ng-container *ngIf="isAuthenticated$ | async">
         <a routerLink="/dashboard" class="nav-link">Dashboard</a>
       </ng-container>
-      <a routerLink="/dashboard/account" class="nav-link" (click)="close()">Account </a>
+      <a routerLink="/dashboard/account" class="nav-link" (click)="close()">Mon compte</a>
 
     <ng-container *ngIf="isAuthenticated$ | async">
       <button class="btn btn-secondary" (click)="logout()">
