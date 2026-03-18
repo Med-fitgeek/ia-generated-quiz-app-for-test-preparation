@@ -16,6 +16,7 @@ export class QuizReviewComponent implements OnInit {
 
   review!: QuizReviewDto;
   report!: QuizReportDto;
+  currentIndex = 0;
 
   loading = true;
   error: string | null = null;
@@ -47,6 +48,18 @@ export class QuizReviewComponent implements OnInit {
         },
         error: () => this.error = "Unable to load session report"
       });
+  }
+
+  next() {
+    if (this.currentIndex < this.review.questions.length - 1) {
+      this.currentIndex++;
+    }
+  }
+
+  prev() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
   }
 
 }
