@@ -1,10 +1,17 @@
 <nav class="navbar">
-  <div class="container flex-between">
+  <div class="container flex-between items-center">
+
     <a routerLink="/" class="brand">
       <img src="assets/img/b-ready.png" alt="logo">
     </a>
 
-    <div class="flex-between gap-5">
+    <!-- Burger -->
+    <button class="burger" (click)="toggleMenu()">
+      ☰
+    </button>
+
+    <!-- Menu -->
+    <div class="navbar-menu flex-between gap-5" [class.open]="isMenuOpen">
 
       <ng-container *ngIf="isAuthenticated$ | async">
         <a routerLink="/dashboard" class="nav-link">Dashboard</a>

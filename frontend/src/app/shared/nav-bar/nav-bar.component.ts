@@ -17,8 +17,12 @@ export class NavBarComponent {
   isAuthenticated$ = this.authService.isAuthenticated$;
 
   constructor(private authService: AuthService) {}
+  
+  
+  isMenuOpen = false;
+
   toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+    this.isMenuOpen = !this.isMenuOpen;
   }
 
 
