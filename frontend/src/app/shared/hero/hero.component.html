@@ -1,21 +1,118 @@
 <section class="hero">
-  
-    <!-- TEXTE -->
+
+  <!-- Decorative blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="hero-inner">
+
+    <!-- LEFT: Text -->
     <div class="hero-content">
+
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Propulsé par l'IA
+      </div>
+
       <h1>
-        Transformez vos documents en quiz intelligents
-        <span class="text-accent">en quelques secondes</span>.
+        Transformez vos documents en
+        <span class="gradient-text">quiz intelligents</span>
+        en quelques secondes.
       </h1>
 
       <p>
         Importez vos cours, articles ou textes structurés.
-        Générez automatiquement un quiz pertinent et obtenez un rapport détaillé des performances.
+        Générez automatiquement un quiz pertinent et obtenez
+        un rapport détaillé de vos performances.
       </p>
 
       <div class="hero-buttons">
-        <a routerLink="/login" class="btn btn-primary">Essayer gratuitement</a>
+        <a routerLink="/login" class="btn btn-primary hero-cta">
+          Essayer gratuitement
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               width="16" height="16">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
         <a routerLink="#" class="btn btn-secondary">Voir une démo</a>
       </div>
- 
+
+      <div class="hero-social-proof">
+        <div class="avatars">
+          <div class="mini-avatar" style="background: linear-gradient(135deg,#f97316,#ef4444)">🦊</div>
+          <div class="mini-avatar" style="background: linear-gradient(135deg,#6366f1,#8b5cf6)">🐺</div>
+          <div class="mini-avatar" style="background: linear-gradient(135deg,#22c55e,#16a34a)">🐸</div>
+          <div class="mini-avatar" style="background: linear-gradient(135deg,#ec4899,#a21caf)">🐙</div>
+        </div>
+        <p><strong>+2 000</strong> apprenants utilisent déjà QuizGen</p>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Floating mockup -->
+    <div class="hero-visual">
+
+      <div class="mockup-card mockup-main">
+        <div class="mockup-header">
+          <div class="mockup-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="mockup-title">Quiz généré — Biologie cellulaire</span>
+        </div>
+
+        <div class="mockup-question">
+          <p class="question-label">Question 3 / 10</p>
+          <p class="question-text">Quel organite est responsable de la synthèse des protéines ?</p>
+        </div>
+
+        <div class="mockup-options">
+          <div class="option option-correct">
+            <span class="option-letter">A</span>
+            Ribosome
+            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="option">
+            <span class="option-letter">B</span>
+            Mitochondrie
+          </div>
+          <div class="option">
+            <span class="option-letter">C</span>
+            Noyau
+          </div>
+        </div>
+
+        <div class="mockup-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 30%"></div>
+          </div>
+          <span>30%</span>
+        </div>
+      </div>
+
+      <!-- Floating score badge -->
+      <div class="mockup-badge badge-score">
+        <div class="badge-icon score-icon">📈</div>
+        <div>
+          <p class="badge-val">87%</p>
+          <p class="badge-sub">Score moyen</p>
+        </div>
+      </div>
+
+      <!-- Floating AI badge -->
+      <div class="mockup-badge badge-ai">
+        <div class="badge-icon ai-icon">⚡</div>
+        <div>
+          <p class="badge-val">3 sec</p>
+          <p class="badge-sub">Génération IA</p>
+        </div>
+      </div>
+
+    </div>
+
   </div>
+
 </section>

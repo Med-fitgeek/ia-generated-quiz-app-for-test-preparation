@@ -1,66 +1,64 @@
 <section class="section-reviews">
-  <div class="container reviews-wrapper">
 
-    <div class="reviews-header">
-      <div class="badge">
-        Les avis
-      </div>
-      <h2>
-        Ils ont transformé leur façon d’apprendre.
-      </h2>
-      <p>
-        Étudiants et formateurs utilisent déjà la plateforme pour créer des évaluations intelligentes.
-      </p>
+  <!-- Header -->
+  <div class="reviews-header">
+    <div class="badge">⭐ Les avis</div>
+    <h2>Ils ont transformé<br>leur façon d'apprendre</h2>
+    <p>
+      Étudiants et formateurs utilisent déjà la plateforme
+      pour créer des évaluations intelligentes.
+    </p>
+  </div>
+
+  <!-- Trust bar -->
+  <div class="trust-bar">
+    <div class="trust-stat">
+      <span class="trust-val">2 000+</span>
+      <span class="trust-label">Apprenants actifs</span>
     </div>
+    <div class="trust-divider"></div>
+    <div class="trust-stat">
+      <span class="trust-val">50 000+</span>
+      <span class="trust-label">Quiz générés</span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-stat">
+      <span class="trust-val">4.9 / 5</span>
+      <span class="trust-label">Note moyenne</span>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-stat">
+      <span class="trust-val">98%</span>
+      <span class="trust-label">Satisfaction</span>
+    </div>
+  </div>
 
-    <div class="reviews-grid">
+  <!-- Marquee -->
+  <div class="marquee-container">
+    <div class="fade-left"></div>
+    <div class="fade-right"></div>
 
-      <div class="review-card">
-        <div class="review-rating">★★★★★</div>
-        <p class="review-text">
-          “J’ai généré un quiz de 25 questions à partir de mon cours en quelques secondes.
-          Le rapport m’a montré exactement où je devais réviser.”
-        </p>
-        <div class="review-author">
-          <div class="avatar">ML</div>
-          <div>
-            <strong>Marie L.</strong>
-            <span>Étudiante en Licence</span>
+    <div class="marquee-track">
+      <ng-container *ngFor="let _ of [1, 2]">
+        <div class="review-card" *ngFor="let review of reviews">
+          <div class="quote-mark">"</div>
+          <div class="review-stars">
+            <span *ngFor="let s of starsArray">★</span>
+          </div>
+          <p class="review-text">{{ review.text }}</p>
+          <div class="review-author">
+            <div class="avatar" [style.background]="review.gradient">
+              {{ review.initials }}
+            </div>
+            <div class="author-info">
+              <strong>{{ review.name }}</strong>
+              <span>{{ review.role }}</span>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="review-card">
-        <div class="review-rating">★★★★★</div>
-        <p class="review-text">
-          “Je crée désormais mes évaluations en 1/10 du temps.
-          Les questions sont pertinentes et bien réparties.”
-        </p>
-        <div class="review-author">
-          <div class="avatar">TK</div>
-          <div>
-            <strong>Thomas K.</strong>
-            <span>Formateur indépendant</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="review-card">
-        <div class="review-rating">★★★★★</div>
-        <p class="review-text">
-          “Le rapport par thème change tout. On voit immédiatement
-          les lacunes des apprenants.”
-        </p>
-        <div class="review-author">
-          <div class="avatar">SN</div>
-          <div>
-            <strong>Sophie N.</strong>
-            <span>Responsable pédagogique</span>
-          </div>
-        </div>
-      </div>
-
+      </ng-container>
     </div>
 
   </div>
+
 </section>

@@ -1,127 +1,274 @@
+/* ─── Section ─────────────────────────────────────── */
+
 .how {
-  padding: 50px 20px;
+  padding: 100px 40px;
   background: white;
   text-align: center;
+  overflow: hidden;
 }
 
-.header {
-  max-width: 750px;
-  margin: auto;
-  margin-bottom: 80px;
+
+/* ─── Header ──────────────────────────────────────── */
+
+.how-header {
+  max-width: 640px;
+  margin: 0 auto 80px;
 
   h2 {
-    font-size: 42px;
-    font-weight: 700;
-    margin: 16px 0;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin: 16px 0 12px;
+    line-height: 1.2;
   }
 
   p {
-    font-size: 18px;
-    color: #6b7280;
+    font-size: 1.05rem;
+    color: #64748b;
+    line-height: 1.6;
   }
 }
 
 .badge {
   display: inline-block;
-  padding: 8px 18px;
+  padding: 7px 16px;
   border-radius: 999px;
-  background: #e5e8f3;
+  background: rgba(78, 108, 205, 0.08);
   color: #4e6ccd;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.82rem;
+  border: 1px solid rgba(78, 108, 205, 0.15);
 }
+
+
+/* ─── Steps wrapper ───────────────────────────────── */
+
+.steps-wrapper {
+  position: relative;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Gradient line behind icons (desktop) */
+.connector-line {
+  position: absolute;
+  top: 35px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(to right, #4ECDC4, #4e6ccd);
+  z-index: 0;
+  border-radius: 2px;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ECDC4;
+  }
+
+  &::before { left: 0; }
+  &::after  { right: 0; background: #4e6ccd; }
+}
+
+
+/* ─── Steps grid ──────────────────────────────────── */
 
 .steps {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 40px;
-  max-width: 1100px;
-  margin: auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
   position: relative;
+  z-index: 1;
 }
 
-.line {
+
+/* ─── Single step ─────────────────────────────────── */
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 8px;
+}
+
+/* Arrow between steps */
+.step-arrow {
+  display: none; /* shown via alternate approach below */
+}
+
+
+/* ─── Icon area ───────────────────────────────────── */
+
+.step-icon-wrap {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+/* Soft glow ring */
+.step-ring {
   position: absolute;
-  top: 30px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    #4ECDC4,
-    #4e6ccd
-  );
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(78,205,196,0.15), transparent 70%);
   z-index: 0;
 }
 
-.step {
+.icon-container {
   position: relative;
   z-index: 1;
-
-  h3 {
-    font-size: 20px;
-    margin: 20px 0 10px;
-    font-weight: 600;
-  }
-
-  p {
-    font-size: 15px;
-    color: #6b7280;
-    line-height: 1.5;
-  }
-}
-
-.icon-container {
-  width: 70px;
-  height: 70px;
-  margin: auto;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: white;
   border: 2px solid #4ECDC4;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   color: #4ECDC4;
+  box-shadow:
+    0 4px 14px rgba(78, 205, 196, 0.2),
+    0 0 0 6px rgba(78, 205, 196, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  .step:hover & {
+    transform: scale(1.08);
+    box-shadow:
+      0 8px 24px rgba(78, 205, 196, 0.3),
+      0 0 0 8px rgba(78, 205, 196, 0.08);
+  }
 }
 
-.number {
+.step-number {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 24px;
-  height: 24px;
-  background: #4e6ccd;
+  top: -4px;
+  right: -4px;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #4e6ccd, #4ECDC4);
   color: white;
-  font-size: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(78, 108, 205, 0.35);
 }
 
-@media (max-width: 1000px) {
 
-  .steps {
-    grid-template-columns: repeat(2,1fr);
-    gap: 60px;
+/* ─── Step body ───────────────────────────────────── */
+
+.step-body {
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 10px;
+    line-height: 1.35;
   }
 
-  .line {
+  p {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.6;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
+
+
+/* ─── Responsive ──────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .how {
+    padding: 72px 24px;
+  }
+
+  /* Switch to 2-column grid, hide horizontal line */
+  .connector-line {
     display: none;
   }
 
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px 32px;
+  }
+
+  /* Vertical connector between rows */
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 72px;
+    bottom: 72px;
+    width: 2px;
+    background: linear-gradient(to bottom, #4ECDC4, #4e6ccd);
+    transform: translateX(-50%);
+    z-index: 0;
+    border-radius: 2px;
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 560px) {
+  .how {
+    padding: 64px 20px;
+  }
 
+  /* Full vertical timeline on mobile */
   .steps {
     grid-template-columns: 1fr;
+    gap: 0;
+    max-width: 320px;
+    margin: 0 auto;
   }
 
-  .header h2 {
-    font-size: 32px;
+  .steps::before {
+    display: none;
   }
 
+  /* Each step becomes a horizontal row */
+  .step {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    gap: 20px;
+    padding: 0 0 40px 0;
+    position: relative;
+
+    /* Vertical dotted line */
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 35px;
+      top: 72px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #4ECDC4, transparent);
+    }
+  }
+
+  .step-icon-wrap {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .step-body {
+    padding-top: 16px;
+
+    p {
+      max-width: none;
+    }
+  }
+
+  .how-header {
+    margin-bottom: 56px;
+  }
 }
