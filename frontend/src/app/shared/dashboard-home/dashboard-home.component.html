@@ -1,117 +1,23 @@
-<div class="dashboard-header">
-      <div>
-        <h2>Dashboard</h2>
-        <p class="muted">Bienvenue, {{userName}}</p>
-      </div>
+<div class="container" >
+  <app-dashboard-header
+  [userName]="userName"
+  (newQuiz)="newQuiz()">
+</app-dashboard-header>
 
-      <div class="header-actions">
-        <button class="btn btn-primary" (click)="newQuiz()">
-          + Nouveau Quiz
-        </button>
-        
-        <div class="profile-badge">
-          {{userName.charAt(0).toUpperCase()}}
-        </div>
-      </div>
-</div>
+<app-stats-grid
+  [totalQuizzes]="totalQuizzes"
+  [totalSessions]="totalSessions"
+  [averageScore]="averageScore"
+/>
 
-<!-- STATS -->
-<div class="stats-grid">
+<app-sessions-card
+  [sessions]="sessions"
+  (goToReview)="goToReview($event)"
+/>
 
-  <div class="stat-card">
-    <h3>{{ totalQuizzes }}</h3>
-    <p>Quizzes créés</p>
-  </div>
-
-  <div class="stat-card">
-    <h3>{{ totalSessions }}</h3>
-    <p>Sessions jouées</p>
-  </div>
-
-  <div class="stat-card">
-    <h3>{{ averageScore }}%</h3>
-    <p>Score moyen</p>
-  </div>
-
-</div>
-
-<!--- SESSION GRID --->
-<div class="sessions-card">
-
-    <div class="sessions-header">
-      <h3>Vos sessions recentes</h3>
-    </div>
-
-    <div *ngIf="sessions.length === 0" class="empty-state">
-      Aucun quiz enregistre pour le moment.
-    </div>
-
-    <div class="sessions-list">
-
-      <div
-        class="session-item"
-        *ngFor="let session of sessions"
-      >
-
-        <div class="session-info">
-          <span class="session-id">
-            Session #{{session.id}}
-          </span>
-        </div>
-
-          <div class="session-score"
-            [ngClass]="{
-              'good': session.rate >= 80,
-              'medium': session.rate >= 50 && session.rate < 80,
-              'bad': session.rate < 50
-            }"
-          >
-            {{session.rate}}%
-          </div>
-
-          <button
-            class="review-btn"
-            (click)="goToReview(session.id)"
-          >
-            Review
-          </button>
-
-      </div>
-
-    </div>
-
-</div>
-
-<!-- QUIZ GRID -->
-<div class="quiz-grid">
-
-  <div class="quiz-tile" *ngFor="let quiz of quizzes">
-
-    <div class="quiz-tile-header">
-      <h3>{{ quiz.title }}</h3>
-      <span class="quiz-date">
-        {{ quiz.generatedAt }}
-      </span>
-    </div>
-
-    <div class="quiz-meta">
-      {{ quiz.sessionsCount }} sessions
-    </div>
-
-    <div class="quiz-actions">
-      <button class="btn btn-secondary"
-              (click)="startSession(quiz.quizId)">
-        Nouvelle session
-      </button>
-
-      <button class="btn btn-primary"
-              (click)="deleteQuiz(quiz.quizId)">
-        <lucide-icon
-          [name]='TraShIcon'
-          size="22"
-        ></lucide-icon>
-      </button>
-    </div>
-
-  </div>
+<app-quiz-grid
+  [quizzes]="quizzes"
+  (startSession)="startSession($event)"
+  (deleteQuiz)="deleteQuiz($event)"
+/>
 </div>

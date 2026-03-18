@@ -1,16 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
-import { QuizSummary } from '../../core/models/quiz-summary.model';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { SessionResponseDto } from '../../core/models/session-response-dto.model';
-import { SessionService } from '../../core/services/session.service';
-import { UserService } from '../../core/services/user.service';
+import { RouterOutlet } from '@angular/router';
+
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, RouterOutlet],
+  imports: [CommonModule, RouterOutlet],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

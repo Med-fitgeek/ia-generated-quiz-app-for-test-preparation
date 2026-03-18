@@ -1,0 +1,37 @@
+<div class="quiz-grid">
+
+  <div class="quiz-tile" *ngFor="let quiz of quizzes">
+
+    <div class="quiz-tile-header">
+      <h3>{{ quiz.title }}</h3>
+      <span class="quiz-date">
+        {{ quiz.generatedAt }}
+      </span>
+    </div>
+
+    <div class="quiz-meta">
+      {{ quiz.sessionsCount }} sessions
+    </div>
+
+    <div class="quiz-actions">
+      <button
+        class="btn btn-secondary"
+        (click)="onStartSession(quiz.quizId)"
+      >
+        Nouvelle session
+      </button>
+
+      <button
+        class="btn btn-primary"
+        (click)="onDeleteQuiz(quiz.quizId)"
+      >
+        <lucide-icon
+          [name]="TrashIcon"
+          size="22"
+        ></lucide-icon>
+      </button>
+    </div>
+
+  </div>
+
+</div>

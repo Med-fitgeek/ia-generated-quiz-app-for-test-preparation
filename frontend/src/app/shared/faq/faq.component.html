@@ -1,17 +1,20 @@
 <section class="faq-section container">
 
+  <!-- HEADER -->
   <div class="faq-header">
 
-    <h1 class="gradient-text">
-      Questions fréquentes
-    </h1>
+    <div class="section-label">Aide & Support</div>
 
-    <p>
-      Tout ce que vous devez savoir sur B-READY et la génération de quiz par IA.
+    <h1 class="gradient-text">Questions fréquentes</h1>
+
+    <p class="faq-subtitle">
+      Tout ce que vous devez savoir sur QuizGen et la génération de quiz par IA.
     </p>
 
   </div>
 
+
+  <!-- LIST -->
   <div class="faq-list">
 
     <div
@@ -23,41 +26,42 @@
 
       <div class="faq-question">
 
-        <h3>
-          {{faq.question}}
-        </h3>
+        <h3>{{ faq.question }}</h3>
 
-        <span class="faq-icon">
-          {{ faq.open ? "−" : "+" }}
+        <span class="faq-icon" [class.rotated]="faq.open">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 9l-7 7-7-7"/>
+          </svg>
         </span>
 
       </div>
 
-      <div class="faq-answer" *ngIf="faq.open">
-
-        <p>
-          {{faq.answer}}
-        </p>
-
+      <div class="faq-answer" [class.visible]="faq.open">
+        <p>{{ faq.answer }}</p>
       </div>
 
     </div>
 
   </div>
 
+
+  <!-- CTA -->
   <div class="faq-cta card accent-border">
 
-    <h3>
-      Vous ne trouvez pas votre réponse ?
-    </h3>
+    <div class="faq-cta-content">
+      <h3>Vous ne trouvez pas votre réponse ?</h3>
+      <p>Contactez-nous ou essayez directement de générer votre premier quiz.</p>
+    </div>
 
-    <p>
-      Contactez-nous ou essayez directement de générer votre premier quiz.
-    </p>
-
-    <button class="btn btn-primary">
-      Commencer un quiz
-    </button>
+    <div class="faq-cta-actions">
+      <a href="mailto:contact@quizgen.app" class="btn btn-secondary">
+        Nous contacter
+      </a>
+      <a routerLink="/register" class="btn btn-primary">
+        Commencer un quiz
+      </a>
+    </div>
 
   </div>
 
