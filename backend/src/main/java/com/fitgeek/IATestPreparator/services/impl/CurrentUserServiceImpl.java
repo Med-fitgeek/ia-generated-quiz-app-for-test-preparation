@@ -56,7 +56,8 @@ public class CurrentUserServiceImpl implements CurrentUserService {
         return new UserDto(
                         user.getId(),
                         user.getUsername(),
-                        user.getEmail()
+                        user.getEmail(),
+                        user.getCreatedAt()
         );
     }
 }
