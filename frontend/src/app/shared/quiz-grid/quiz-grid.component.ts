@@ -12,17 +12,14 @@ import { LucideAngularModule } from 'lucide-angular';
 export class QuizGridComponent {
 
   @Input() quizzes: any[] = [];
+  @Input() totalCount: number = 0;
   @Output() startSession = new EventEmitter<number>();
   @Output() deleteQuiz = new EventEmitter<number>();
+  @Output() seeAll = new EventEmitter<void>();
 
   TrashIcon = 'Trash';
 
-  onStartSession(quizId: number): void {
-    this.startSession.emit(quizId);
-  }
-
-  onDeleteQuiz(quizId: number): void {
-    this.deleteQuiz.emit(quizId);
-  }
-
+  onStartSession(quizId: number): void { this.startSession.emit(quizId); }
+  onDeleteQuiz(quizId: number): void   { this.deleteQuiz.emit(quizId); }
+  onSeeAll(): void                      { this.seeAll.emit(); }
 }
