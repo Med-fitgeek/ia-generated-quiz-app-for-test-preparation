@@ -1,18 +1,16 @@
 .dashboard-layout {
-  display: flex;
   min-height: 100vh;
+  background: #f8faff;
 }
 
 .dashboard-main {
-  flex: 1;
   padding: 32px;
   overflow-y: auto;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .dashboard-main {
     padding: 24px 16px;
-    padding-top: 64px; /* espace pour le hamburger fixe */
+    padding-top: 64px;
   }
 }

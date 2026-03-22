@@ -1,23 +1,30 @@
-<div class="container" >
+<div class="dash-page">
+
   <app-dashboard-header
-  [userName]="userName"
-  (newQuiz)="newQuiz()">
-</app-dashboard-header>
+    [userName]="userName"
+    [avatarId]="avatarId"
+    (newQuiz)="newQuiz()">
+  </app-dashboard-header>
 
-<app-stats-grid
-  [totalQuizzes]="totalQuizzes"
-  [totalSessions]="totalSessions"
-  [averageScore]="averageScore"
-/>
+  <app-stats-grid
+    [totalQuizzes]="totalQuizzes"
+    [totalSessions]="totalSessions"
+    [averageScore]="averageScore"
+  />
 
-<app-sessions-card
-  [sessions]="sessions"
-  (goToReview)="goToReview($event)"
-/>
+  <app-sessions-card
+    [sessions]="recentSessions"
+    [totalCount]="totalSessions"
+    (goToReview)="goToReview($event)"
+    (seeAll)="goToSessions()"
+  />
 
-<app-quiz-grid
-  [quizzes]="quizzes"
-  (startSession)="startSession($event)"
-  (deleteQuiz)="deleteQuiz($event)"
-/>
+  <app-quiz-grid
+    [quizzes]="recentQuizzes"
+    [totalCount]="totalQuizzes"
+    (startSession)="startSession($event)"
+    (deleteQuiz)="deleteQuiz($event)"
+    (seeAll)="goToQuizzes()"
+  />
+
 </div>
