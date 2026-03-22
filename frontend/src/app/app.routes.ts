@@ -3,6 +3,8 @@ import { HomeComponent } from './shared/home/home.component';
 import { authGuard } from './core/guards/auth.guards';
 import { DashboardHomeComponent } from './shared/dashboard-home/dashboard-home.component';
 import { AccountComponent } from './shared/account/account.component';
+import { SessionsListComponent } from './shared/sessions-list/sessions-list.component';
+import { QuizzesListComponent } from './shared/quizzes-list/quizzes-list.component';
 
 export const routes: Routes = [
   {
@@ -42,8 +44,12 @@ export const routes: Routes = [
         component: DashboardHomeComponent
       },
       {
+        path: 'sessions',
+        component: SessionsListComponent
+      },
+      {
         path: 'quizzes',
-        component: DashboardHomeComponent
+        component: QuizzesListComponent
       },
       {
         path: 'account',
