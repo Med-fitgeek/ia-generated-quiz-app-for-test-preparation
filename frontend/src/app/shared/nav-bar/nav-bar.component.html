@@ -5,31 +5,84 @@
       <img src="assets/img/b-ready.png" alt="logo">
     </a>
 
-    <!-- Burger -->
-    <button class="burger" (click)="toggleMenu()">
-      ☰
+    <button class="burger" (click)="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
     </button>
 
-    <!-- Menu -->
-    <div class="navbar-menu flex-between gap-5" [class.open]="isMenuOpen">
+    <div class="navbar-menu" [class.open]="isMenuOpen">
 
-      
-      <a routerLink="/about" class="nav-link">A propos</a>
-      <a routerLink="/faq" class="nav-link">FAQ</a>
+      <a routerLink="/about" class="nav-link" (click)="closeMenu()">À propos</a>
+      <a routerLink="/faq"   class="nav-link" (click)="closeMenu()">FAQ</a>
+
       <ng-container *ngIf="isAuthenticated$ | async">
-        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+        <a routerLink="/dashboard" class="nav-link" (click)="closeMenu()">Dashboard</a>
       </ng-container>
-      <a routerLink="/dashboard/account" class="nav-link" (click)="close()">Mon compte</a>
-
-    <ng-container *ngIf="isAuthenticated$ | async">
-      <button class="btn btn-secondary" (click)="logout()">
-        Se déconnecter
-      </button>
-    </ng-container>
 
       <ng-container *ngIf="!(isAuthenticated$ | async)">
-        <a routerLink="/login" class="btn btn-secondary">Se connecter</a>
-        <a routerLink="/register" class="btn btn-primary">S'inscrire</a>
+        <a routerLink="/login"    class="btn btn-secondary" (click)="closeMenu()">Se connecter</a>
+        <a routerLink="/register" class="btn btn-primary"   (click)="closeMenu()">S'inscrire</a>
+      </ng-container>
+
+      <!-- Avatar dropdown (connecté, desktop) -->
+      <ng-container *ngIf="isAuthenticated$ | async">
+
+        <div class="avatar-menu">
+          <button class="avatar-btn" (click)="toggleDropdown()" [class.active]="dropdownOpen">
+            <div class="avatar-circle" [style.background]="userAvatar.gradient">
+              {{ userAvatar.emoji }}
+            </div>
+            <svg class="avatar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </button>
+
+          <div class="dropdown" [class.open]="dropdownOpen">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar" [style.background]="userAvatar.gradient">
+                {{ userAvatar.emoji }}
+              </div>
+              <div>
+                <p class="dropdown-name">{{ userName }}</p>
+                <p class="dropdown-email">{{ userEmail }}</p>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a routerLink="/dashboard/account" class="dropdown-item" (click)="closeDropdown()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+              Mon profil
+            </a>
+            <a routerLink="/dashboard" class="dropdown-item" (click)="closeDropdown()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              Dashboard
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item item-danger" (click)="logout()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Se déconnecter
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile inline -->
+        <div class="mobile-auth">
+          <a routerLink="/dashboard/account" class="dropdown-item" (click)="closeMenu()">Mon profil</a>
+          <button class="btn btn-secondary" (click)="logout()">Se déconnecter</button>
+        </div>
+
       </ng-container>
 
     </div>
