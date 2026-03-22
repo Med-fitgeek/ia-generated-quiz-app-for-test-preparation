@@ -1,46 +1,50 @@
 <div class="sessions-card">
 
   <div class="sessions-header">
-    <h3>Vos sessions recentes</h3>
+    <div>
+      <h3>Sessions récentes</h3>
+      <p class="sessions-sub" *ngIf="totalCount > sessions.length">
+        {{ sessions.length }} sur {{ totalCount }} sessions
+      </p>
+    </div>
+    <button class="see-all-btn" *ngIf="totalCount > sessions.length" (click)="onSeeAll()">
+      Voir tout
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
   </div>
 
   <div *ngIf="sessions.length === 0" class="empty-state">
-    Aucun quiz enregistre pour le moment.
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+         stroke-linecap="round" stroke-linejoin="round" width="32" height="32">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+    <p>Aucune session pour le moment</p>
   </div>
 
   <div class="sessions-list">
-
-    <div
-      class="session-item"
-      *ngFor="let session of sessions"
-    >
-
+    <div class="session-item" *ngFor="let session of sessions">
       <div class="session-info">
-        <span class="session-id">
-          Session #{{ session.id }}
-        </span>
+        <span class="session-id">Session #{{ session.id }}</span>
       </div>
-
-      <div
-        class="session-score"
-        [ngClass]="{
-          'good':   session.rate >= 80,
-          'medium': session.rate >= 50 && session.rate < 80,
-          'bad':    session.rate < 50
-        }"
-      >
+      <div class="session-score"
+           [ngClass]="{'good': session.rate >= 80, 'medium': session.rate >= 50 && session.rate < 80, 'bad': session.rate < 50}">
         {{ session.rate }}%
       </div>
-
-      <button
-        class="review-btn"
-        (click)="onReview(session.id)"
-      >
-        Review
-      </button>
-
+      <button class="review-btn" (click)="onReview(session.id)">Rapport</button>
     </div>
+  </div>
 
+  <div class="sessions-footer" *ngIf="totalCount > sessions.length">
+    <button class="see-all-full" (click)="onSeeAll()">
+      Voir toutes les sessions ({{ totalCount }})
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
   </div>
 
 </div>

@@ -6,4 +6,5 @@ public record UserDto(
         Long id,
         String username,
         String email,
+        String avatarId,
         LocalDateTime createdAt) {}

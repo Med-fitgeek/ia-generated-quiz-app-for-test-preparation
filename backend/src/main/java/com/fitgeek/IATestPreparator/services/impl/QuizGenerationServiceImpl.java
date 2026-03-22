@@ -195,6 +195,6 @@ public class QuizGenerationServiceImpl implements QuizGenerationService {
                         .build())
                 .toList();
 
-        return new GeneratedQuizDto(quiz.getId(), questionDtos);
+        return new GeneratedQuizDto(quiz.getId(), quiz.getTitle(), questionDtos);
     }
 }
