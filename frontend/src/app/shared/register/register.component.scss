@@ -1,0 +1,174 @@
+$primary: #4e6ccd;
+$teal: #4ECDC4;
+$dark: #0f172a;
+$muted: #64748b;
+$border: #e8edf2;
+
+// ── Page ──────────────────────────────────────────────
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #f8faff;
+  position: relative;
+  overflow: hidden;
+}
+
+// ── Blobs ─────────────────────────────────────────────
+.auth-blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); opacity: .35; pointer-events: none;
+  animation: blob-drift 8s ease-in-out infinite alternate;
+}
+
+.auth-blob-1 { width: 380px; height: 380px; top: -100px; right: -80px; background: radial-gradient(circle, #c7d4f8, #a5b4fc); }
+.auth-blob-2 { width: 280px; height: 280px; bottom: -80px; left: -60px; background: radial-gradient(circle, #b2f0ed, #5eead4); animation-delay: -4s; }
+
+@keyframes blob-drift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(20px,15px) scale(1.05); }
+}
+
+// ── Card ──────────────────────────────────────────────
+.auth-card {
+  position: relative; z-index: 1;
+  background: white; border-radius: 28px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 24px 64px rgba(78,108,205,.1);
+  padding: 44px 48px;
+  width: 100%; max-width: 460px;
+}
+
+// ── Brand ─────────────────────────────────────────────
+.auth-brand {
+  display: flex; justify-content: center; margin-bottom: 28px;
+}
+
+.auth-logo { height: 36px; width: auto; }
+
+// ── Header ────────────────────────────────────────────
+.auth-header {
+  text-align: center; margin-bottom: 28px;
+  h1 { font-size: 1.5rem; font-weight: 800; color: $dark; letter-spacing: -.02em; margin-bottom: 6px; }
+  p  { font-size: .9rem; color: $muted; margin: 0; line-height: 1.5; }
+}
+
+// ── Alerts ────────────────────────────────────────────
+.auth-alert {
+  display: flex; align-items: center; gap: 8px;
+  border-radius: 12px; padding: 12px 14px;
+  font-size: .85rem; font-weight: 500; margin-bottom: 20px;
+
+  &.alert-error   { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+  &.alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+}
+
+// ── Form ──────────────────────────────────────────────
+.auth-form { display: flex; flex-direction: column; gap: 18px; }
+
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+
+label {
+  font-size: .82rem; font-weight: 700; color: #374151;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid $border; border-radius: 12px;
+  font-size: .95rem; color: $dark; background: #fafafa;
+  transition: border-color .2s, box-shadow .2s;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none; border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(78,108,205,.1);
+    background: white;
+  }
+
+  &::placeholder { color: #d1d5db; }
+  &.invalid { border-color: #fca5a5; background: #fff8f8; }
+  &.invalid:focus { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.1); }
+}
+
+.field-error { font-size: .75rem; color: #ef4444; font-weight: 500; }
+
+// ── Password wrap ─────────────────────────────────────
+.password-wrap {
+  position: relative;
+
+  input { padding-right: 44px; }
+}
+
+.eye-btn {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; color: #94a3b8;
+  display: flex; align-items: center; padding: 4px;
+  transition: color .2s;
+  &:hover { color: $primary; }
+}
+
+// ── Password strength ─────────────────────────────────
+.password-strength {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.strength-bars {
+  display: flex; gap: 4px; flex: 1;
+}
+
+.bar {
+  flex: 1; height: 4px; border-radius: 100px;
+  background: $border; transition: background .3s ease;
+
+  &.active {
+    &.weak   { background: #ef4444; }
+    &.medium { background: #f59e0b; }
+    &.strong { background: #22c55e; }
+  }
+}
+
+.strength-label {
+  font-size: .72rem; font-weight: 600; min-width: 36px; text-align: right;
+  color: #94a3b8;
+
+  .password-strength:has(.bar.active.weak) & { color: #ef4444; }
+  .password-strength:has(.bar.active.medium) & { color: #f59e0b; }
+  .password-strength:has(.bar.active.strong) & { color: #22c55e; }
+}
+
+// ── Submit button ─────────────────────────────────────
+.auth-submit {
+  width: 100%; justify-content: center;
+  display: flex; align-items: center; gap: 8px;
+  padding: 13px 24px; font-size: .97rem; margin-top: 4px;
+}
+
+.btn-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: white;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Switch link ───────────────────────────────────────
+.auth-switch {
+  text-align: center; margin-top: 20px;
+  font-size: .87rem; color: $muted;
+}
+
+.auth-link {
+  color: $primary; font-weight: 700; text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+// ── Responsive ────────────────────────────────────────
+@media (max-width: 520px) {
+  .auth-card { padding: 32px 24px; border-radius: 24px; }
+  .auth-header h1 { font-size: 1.3rem; }
+}
