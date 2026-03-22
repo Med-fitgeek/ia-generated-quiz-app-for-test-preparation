@@ -1,5 +1,6 @@
 package com.fitgeek.IATestPreparator.services.impl;
 
+import com.fitgeek.IATestPreparator.dtos.UpdatePasswordDto;
 import com.fitgeek.IATestPreparator.dtos.UpdateUserDto;
 import com.fitgeek.IATestPreparator.dtos.UserDto;
 import com.fitgeek.IATestPreparator.entities.User;
@@ -10,9 +11,9 @@ import com.fitgeek.IATestPreparator.services.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,29 +21,29 @@ import org.springframework.stereotype.Service;
 public class CurrentUserServiceImpl implements CurrentUserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    //------------------------------------------------------
+    // Get current authenticated user
+    //------------------------------------------------------
 
     @Override
     public User getCurrentUser() {
-
         Authentication authentication = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new BusinessException(
-                    "User not authenticated",
-                    HttpStatus.UNAUTHORIZED
-            );
+            throw new BusinessException("User not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
-        String email = authentication.getName();
-
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(
-                        "User not found",
-                        HttpStatus.NOT_FOUND
-                ));
+        return userRepository.findByEmailAndDeletedFalse(authentication.getName())
+                .orElseThrow(() -> new BusinessException("User not found", HttpStatus.NOT_FOUND));
     }
+
+    //------------------------------------------------------
+    // Update profile (username, email, avatarId)
+    //------------------------------------------------------
 
     @Override
     public UserDto UpdateUser(UpdateUserDto dto) {
@@ -51,13 +52,57 @@ public class CurrentUserServiceImpl implements CurrentUserService {
         user.setUsername(dto.username());
         user.setEmail(dto.email());
 
+        if (dto.avatarId() != null && !dto.avatarId().isBlank()) {
+            user.setAvatarId(dto.avatarId());
+        }
+
         userRepository.save(user);
 
+        return toDto(user);
+    }
+
+    //------------------------------------------------------
+    // Update password
+    //------------------------------------------------------
+
+    @Override
+    public void updatePassword(UpdatePasswordDto dto) {
+        User user = getCurrentUser();
+
+        if (!passwordEncoder.matches(dto.currentPassword(), user.getPassword())) {
+            throw new BusinessException("Current password is incorrect", HttpStatus.BAD_REQUEST);
+        }
+
+        if (dto.newPassword() == null || dto.newPassword().length() < 8) {
+            throw new BusinessException("New password must be at least 8 characters", HttpStatus.BAD_REQUEST);
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+        userRepository.save(user);
+    }
+
+    //------------------------------------------------------
+    // Soft delete account
+    //------------------------------------------------------
+
+    @Override
+    public void deleteAccount() {
+        User user = getCurrentUser();
+        user.setDeleted(true);
+        userRepository.save(user);
+    }
+
+    //------------------------------------------------------
+    // Helper
+    //------------------------------------------------------
+
+    private UserDto toDto(User user) {
         return new UserDto(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getCreatedAt()
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getAvatarId(),
+                user.getCreatedAt()
         );
     }
 }
