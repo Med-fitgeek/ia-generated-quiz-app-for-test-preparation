@@ -33,4 +33,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean deleted = false;
+
+    @Column(length = 10)
+    @Builder.Default
+    private String avatarId = "a1";
 }
