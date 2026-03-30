@@ -26,7 +26,7 @@ export class FaqComponent {
     {
       question: 'Quels types de documents puis-je importer ?',
       answer:
-        'Vous pouvez importer des PDF, des fichiers texte ou simplement coller du contenu directement dans l\'interface. QuizGen prend en charge les cours universitaires, les articles, les fiches de révision et tout autre contenu structuré.'
+        'Vous pouvez importer des PDF, des fichiers texte ou simplement coller du contenu directement dans l\'interface. Memorix© prend en charge les cours universitaires, les articles, les fiches de révision et tout autre contenu structuré.'
     },
     {
       question: 'Les quiz s\'adaptent-ils à mon niveau ?',
