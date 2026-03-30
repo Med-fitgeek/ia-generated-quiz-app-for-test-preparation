@@ -50,7 +50,7 @@ export class ReviewComponent {
       role: 'Étudiant en Master',
       gradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
       stars: 5,
-      text: 'J\'ai utilisé QuizGen pour préparer mes partiels. Le mode répétition espacée est une révélation — mes résultats ont augmenté de façon significative.'
+      text: 'J\'ai utilisé Memorix pour préparer mes partiels. Le mode répétition espacée est une révélation — mes résultats ont augmenté de façon significative.'
     },
     {
       initials: 'CL',
@@ -66,7 +66,7 @@ export class ReviewComponent {
       role: 'Directeur de formation',
       gradient: 'linear-gradient(135deg, #f59e0b, #ef4444)',
       stars: 5,
-      text: 'On a intégré QuizGen dans notre LMS. L\'onboarding de nos nouveaux collaborateurs est bien plus efficace. Un outil vraiment bien pensé.'
+      text: 'On a intégré Memorix dans notre LMS. L\'onboarding de nos nouveaux collaborateurs est bien plus efficace. Un outil vraiment bien pensé.'
     },
   ];
 
