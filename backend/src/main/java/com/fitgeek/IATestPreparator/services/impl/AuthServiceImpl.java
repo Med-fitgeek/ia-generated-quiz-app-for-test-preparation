@@ -104,10 +104,10 @@ public class AuthServiceImpl implements AuthService {
 
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false) // true en prod
+                .secure(true)
                 .path("/")
                 .maxAge(jwtUtil.getRefreshExpirationMs() / 1000)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build();
 
         return ResponseEntity.ok()
