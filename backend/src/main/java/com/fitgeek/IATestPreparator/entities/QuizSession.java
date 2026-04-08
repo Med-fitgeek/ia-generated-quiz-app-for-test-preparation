@@ -44,6 +44,9 @@ public class QuizSession extends BaseEntity {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizAnswer> answers = new ArrayList<>();
 
+    @OneToOne(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private QuizReport report;
+
     private int correctCount;
 
     private int totalQuestions;

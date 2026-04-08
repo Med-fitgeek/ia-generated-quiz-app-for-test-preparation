@@ -45,6 +45,9 @@ public class Quiz extends BaseEntity {
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuizSession> sessions = new ArrayList<>();
+
     public void addQuestion(Question question) {
         questions.add(question);
         question.setQuiz(this);
