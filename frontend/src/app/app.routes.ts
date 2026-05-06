@@ -70,6 +70,10 @@ export const routes: Routes = [
     path: 'about',
     loadComponent: () => import('./shared/about/about.component').then(m => m.AboutComponent),
   },
+  {
+    path: 'contact',
+    loadComponent: () => import('./shared/contact/contact.component').then(m => m.ContactComponent),
+  },
 
 ];
 

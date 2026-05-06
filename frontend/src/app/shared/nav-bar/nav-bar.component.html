@@ -12,6 +12,7 @@
     <div class="navbar-menu" [class.open]="isMenuOpen">
 
       <a routerLink="/about" class="nav-link" (click)="closeMenu()">À propos</a>
+      <a routerLink="/contact"   class="nav-link" (click)="closeMenu()">Contact</a>
       <a routerLink="/faq"   class="nav-link" (click)="closeMenu()">FAQ</a>
 
       <ng-container *ngIf="isAuthenticated$ | async">
