@@ -1,0 +1,151 @@
+package com.fitgeek.memorix.services.impl;
+
+import com.fitgeek.memorix.dtos.KnowledgeNormalizedResponseDto;
+import com.fitgeek.memorix.dtos.StrucuturedTextdto;
+import com.fitgeek.memorix.entities.KnowledgeSource;
+import com.fitgeek.memorix.entities.User;
+import com.fitgeek.memorix.entities.enums.SourceType;
+import com.fitgeek.memorix.excpetion.BusinessException;
+import com.fitgeek.memorix.repositories.KnowledgeSourceRepository;
+import com.fitgeek.memorix.services.CurrentUserService;
+import com.fitgeek.memorix.services.DocumentProcessingService;
+import com.fitgeek.memorix.services.KnowledgeSourceService;
+import com.fitgeek.memorix.services.StorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.security.NoSuchAlgorithmException;
+
+@Service
+@RequiredArgsConstructor
+public class KnowledgeSourceServiceImpl implements KnowledgeSourceService {
+
+    private static final Logger log =
+            LoggerFactory.getLogger(KnowledgeSourceServiceImpl.class);
+    private final KnowledgeSourceRepository knowledgeSourceRepository;
+    private final DocumentProcessingService documentProcessingService;
+    private final CurrentUserService currentUserService;
+    private final StorageService storageService;
+
+    @Override
+    @Transactional
+    public KnowledgeNormalizedResponseDto createFromText(StrucuturedTextdto textDto) throws IOException {
+
+        User owner = currentUserService.getCurrentUser();
+        String checksum = documentProcessingService.calculateChecksumForText(textDto);
+
+        return findExistingOrCreate(
+                owner,
+                checksum,
+                textDto.subject(),
+                SourceType.TEXT,
+                () -> {
+                    String normalized = documentProcessingService.normalizeText(textDto);
+                    Path path = storageService.saveText(owner.getId(), textDto.subject(), normalized);
+                    return new CreationPayload(normalized, path);
+                }
+        );
+    }
+
+    @Override
+    @Transactional
+    public KnowledgeNormalizedResponseDto createFromDocument(MultipartFile file
+    ) throws IOException, NoSuchAlgorithmException {
+
+        if (file.isEmpty()) {
+            throw new BusinessException("File is empty", HttpStatus.BAD_REQUEST);
+        }
+
+        validateExtension(file.getOriginalFilename());
+
+        User owner = currentUserService.getCurrentUser();
+
+        log.info(
+                "User {} uploading document: filename={}",
+                owner.getId(),
+                file.getOriginalFilename()
+        );
+
+        byte[] bytes = file.getBytes();
+
+        String checksum = documentProcessingService.calculateChecksumForFile(bytes);
+
+        return findExistingOrCreate(
+                owner,
+                checksum,
+                file.getOriginalFilename(),
+                SourceType.DOCUMENT,
+                () -> {
+                    String normalized = documentProcessingService.extractAndNormalize(bytes);
+                    Path path = storageService.saveFile(owner.getId(), file.getOriginalFilename(), file);
+                    return new CreationPayload(normalized, path);
+                }
+        );
+    }
+
+    private KnowledgeNormalizedResponseDto findExistingOrCreate(
+            User owner,
+            String checksum,
+            String filename,
+            SourceType type,
+            CreationStrategy strategy
+    )  {
+
+        return knowledgeSourceRepository
+                .findByOwnerIdAndChecksum(owner.getId(), checksum)
+                .map(existing -> new KnowledgeNormalizedResponseDto(existing.getId()))
+                .orElseGet(() -> {
+
+                    try {
+                        CreationPayload payload = strategy.create();
+
+                        KnowledgeSource entity = KnowledgeSource.builder()
+                                .owner(owner)
+                                .sourceType(type)
+                                .originalFilename(filename)
+                                .normalizedContent(payload.normalizedContent())
+                                .storagePath(payload.path().toString())
+                                .checksum(checksum)
+                                .build();
+
+                        KnowledgeSource saved = knowledgeSourceRepository.save(entity);
+                        log.info(
+                                "Knowledge source created id={} user={} checksum={}",
+                                saved.getId(),
+                                owner.getId(),
+                                checksum
+                        );
+
+                        return new KnowledgeNormalizedResponseDto(saved.getId());
+
+                    } catch (Exception e) {
+                        log.error("Knowledge source creation failed", e);
+                        throw new BusinessException(
+                                "Knowledge source creation failed",
+                                HttpStatus.INTERNAL_SERVER_ERROR
+                        );
+                    }
+                });
+    }
+
+    private void validateExtension(String filename) {
+        if (filename == null ||
+                !(filename.toLowerCase().endsWith(".pdf")
+                        || filename.toLowerCase().endsWith(".docx")
+                        || filename.toLowerCase().endsWith(".csv"))) {
+            throw new BusinessException("File type not supported", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private record CreationPayload(String normalizedContent, Path path) {}
+    private interface CreationStrategy {
+        CreationPayload create() throws Exception;
+    }
+}
