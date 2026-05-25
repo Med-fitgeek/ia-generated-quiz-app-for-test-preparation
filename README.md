@@ -1,9 +1,9 @@
-🧠 B-Ready
+🧠 Memorix
 ==========
 
-> **B-Ready — Transforme ton savoir en maîtrise.**
+> **Memorix — Transforme ton savoir en maîtrise.**
 
-B-Ready est une plateforme web de génération et de jeu de quiz intelligents à partir de contenus (cours, notes, documents, etc.), avec suivi des sessions et des résultats.Objectif : **apprendre mieux, plus vite, et avec des résultats mesurables**.
+Memorix est une plateforme web de génération et de jeu de quiz intelligents à partir de contenus (cours, notes, documents, etc.), avec suivi des sessions et des résultats.Objectif : **apprendre mieux, plus vite, et avec des résultats mesurables**.
 
 ✨ Fonctionnalités
 -----------------
