@@ -1,4 +1,4 @@
-package com.fitgeek.memorix.Utils;
+package com.fitgeek.memorix.utils;
 
 import com.fitgeek.memorix.dtos.StrucuturedTextdto;
 import org.springframework.ai.chat.client.ChatClient;

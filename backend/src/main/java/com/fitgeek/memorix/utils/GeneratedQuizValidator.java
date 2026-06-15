@@ -1,4 +1,4 @@
-package com.fitgeek.memorix.Utils;
+package com.fitgeek.memorix.utils;
 
 import com.fitgeek.memorix.dtos.GeneratedQuizDto;
 import com.fitgeek.memorix.excpetion.BusinessException;

@@ -1,4 +1,4 @@
-package com.fitgeek.memorix.Utils;
+package com.fitgeek.memorix.utils;
 
 import org.apache.tika.Tika;
 import org.springframework.stereotype.Component;

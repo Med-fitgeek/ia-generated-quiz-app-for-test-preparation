@@ -1,7 +1,7 @@
 package com.fitgeek.memorix.services.impl;
 
 import com.fitgeek.memorix.Prompting.GenerationPromptStrategy;
-import com.fitgeek.memorix.Utils.GeneratedQuizValidator;
+import com.fitgeek.memorix.utils.GeneratedQuizValidator;
 import com.fitgeek.memorix.dtos.GeneratedQuestionDto;
 import com.fitgeek.memorix.dtos.GeneratedQuizDto;
 import com.fitgeek.memorix.dtos.QuizGenerationRequestDto;
